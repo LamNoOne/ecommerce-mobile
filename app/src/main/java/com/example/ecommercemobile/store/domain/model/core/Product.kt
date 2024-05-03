@@ -1,0 +1,25 @@
+package com.example.ecommercemobile.store.domain.model.core
+
+data class Product(
+    val id: Int,
+    val name: String,
+    val description: String,
+    val imageUrl: String,
+    val screen: String?,
+    val operatingSystem: String?,
+    val processor: String?,
+    val ram: Int?,
+    val storageCapacity: Int?,
+    val dimensions: String?,
+    val weight: String?,
+    val batteryCapacity: Int?,
+    val frontCameraResolution: String?,
+    val rearCameraResolution: String?,
+    val connectivity: String?,
+    val color: String?,
+    val price: Int,
+    val stockQuantity: Int,
+    val category: Category?,
+    val createdAt: String?,
+    val updatedAt: String?,
+)
