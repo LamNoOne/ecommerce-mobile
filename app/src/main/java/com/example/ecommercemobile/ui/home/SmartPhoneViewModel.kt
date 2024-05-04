@@ -32,7 +32,7 @@ class SmartPhoneViewModel @Inject constructor(
             _state.update {
                 it.copy(isLoading = true)
             }
-            productsRepository.getProductsByCategory(id)
+            productsRepository.getProductsByCategory(id,1, 20)
                 .onRight { products ->
                     _state.update { currentState ->
                         val updatedProducts = currentState.products.toMutableMap()

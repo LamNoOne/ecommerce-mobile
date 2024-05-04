@@ -8,16 +8,15 @@ import com.example.ecommercemobile.store.domain.model.MetadataProduct
 import com.example.ecommercemobile.store.domain.model.MetadataProductCategory
 import com.example.ecommercemobile.store.domain.model.MetadataProducts
 import com.example.ecommercemobile.store.domain.model.Response
-import com.example.ecommercemobile.store.domain.model.core.Product
 import com.example.ecommercemobile.store.domain.repository.ProductsRepository
 import javax.inject.Inject
 
 class ProductsRepositoryImpl @Inject constructor(
     private val productsApi: ProductsApi
 ) : ProductsRepository {
-    override suspend fun getProducts(name: String): Either<NetworkError, Response<MetadataProducts>> {
+    override suspend fun getProducts(name: String, page: Int, limit: Int): Either<NetworkError, Response<MetadataProducts>> {
         return Either.catch {
-            productsApi.getProducts(name)
+            productsApi.getProducts(name, page, limit)
         }.mapLeft { it.toNetworkError() }
     }
 
@@ -28,9 +27,9 @@ class ProductsRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun getProductsByCategory(id: Int): Either<NetworkError, Response<MetadataProductCategory>> {
+    override suspend fun getProductsByCategory(id: Int, page: Int, limit: Int): Either<NetworkError, Response<MetadataProductCategory>> {
         return Either.catch {
-            productsApi.getProductsByCategory(id)
+            productsApi.getProductsByCategory(id, page, limit)
         }.mapLeft { it.toNetworkError() }
     }
 }

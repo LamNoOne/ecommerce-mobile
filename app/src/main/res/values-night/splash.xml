@@ -3,7 +3,7 @@
 <resources>
     <!--    Use Splash API    -->
     <style name="App.Starting.Theme" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#1C1E21</item>
+        <item name="windowSplashScreenBackground">#c0baba</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/icons8_microsoft_sharepoint</item>
         <item name="postSplashScreenTheme">@style/Theme.EcommerceMobile</item>
     </style>

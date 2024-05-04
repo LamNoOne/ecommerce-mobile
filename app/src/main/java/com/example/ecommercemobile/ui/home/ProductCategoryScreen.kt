@@ -22,7 +22,7 @@ fun SmartPhoneScreen(
 ) {
     viewModel.init()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    Row(modifier = Modifier.height(600.dp)) {
+    Row(modifier = Modifier.height(620.dp)) {
         Column(modifier = Modifier.weight(1f)) {
             ProductCategoryContent(state = state)
         }
@@ -36,7 +36,7 @@ fun LaptopScreen(
 ) {
     viewModel.init()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    Row(modifier = Modifier.height(600.dp)) {
+    Row(modifier = Modifier.height(620.dp)) {
         Column(modifier = Modifier.weight(1f)) {
             ProductCategoryContent(state = state)
         }
@@ -66,7 +66,7 @@ internal fun ProductCategoryContent(
                 ProductCard(
                     modifier = Modifier
                         .width(194.dp)
-                        .height(100.dp),
+                        .fillMaxHeight(),
                     product = product
                 )
             }
