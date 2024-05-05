@@ -7,13 +7,14 @@ import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ecommercemobile.ui.home.components.ProductCard
+import com.example.ecommercemobile.ui.utils.ShimmerListItem
+import kotlinx.coroutines.delay
 
 @Composable
 fun SmartPhoneScreen(
@@ -47,6 +48,13 @@ fun LaptopScreen(
 internal fun ProductCategoryContent(
     state: ProductCategoryViewState
 ) {
+    var isLoading by remember { mutableStateOf(state.isLoading) }
+
+    LaunchedEffect(key1 = true) {
+        delay(1200)
+        isLoading = false
+    }
+
     state.products.forEach { (category, products) ->
         Text(
             text = category,
@@ -63,12 +71,14 @@ internal fun ProductCategoryContent(
                 .fillMaxSize()
         ) {
             items(products) { product ->
-                ProductCard(
-                    modifier = Modifier
-                        .width(194.dp)
-                        .fillMaxHeight(),
-                    product = product
-                )
+                ShimmerListItem(isLoading = isLoading, contentAfterLoading = {
+                    ProductCard(
+                        modifier = Modifier
+                            .width(194.dp)
+                            .fillMaxHeight(),
+                        product = product
+                    )
+                })
             }
         }
     }
