@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.ecommercemobile.ui.home
+package com.example.ecommercemobile.ui.home.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,9 +16,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.ecommercemobile.ui.utils.UIEvent
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
     var text by remember { mutableStateOf("") }
 
     var active by remember { mutableStateOf(false) }
@@ -120,10 +121,32 @@ fun HomeScreen() {
             item {
                 Column(modifier = Modifier.fillMaxSize()) {
                     SmartPhoneScreen(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        onNavigate = onNavigate
                     )
                     LaptopScreen(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        onNavigate = onNavigate
+                    )
+                    AccessoryScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        onNavigate = onNavigate
+                    )
+                    CameraScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        onNavigate = onNavigate
+                    )
+                    PCScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        onNavigate = onNavigate
+                    )
+                    StudioScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        onNavigate = onNavigate
+                    )
+                    TVScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        onNavigate = onNavigate
                     )
                 }
             }

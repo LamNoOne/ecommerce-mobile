@@ -1,6 +1,7 @@
-package com.example.ecommercemobile.ui.home
+package com.example.ecommercemobile.ui.home.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -10,48 +11,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.ecommercemobile.ui.home.ProductListEvent
 import com.example.ecommercemobile.ui.home.components.ProductCard
 import com.example.ecommercemobile.ui.utils.ShimmerListItem
 import kotlinx.coroutines.delay
 
 @Composable
-fun SmartPhoneScreen(
-    modifier: Modifier = Modifier,
-    viewModel: SmartPhoneViewModel = hiltViewModel()
-) {
-    viewModel.init()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    Row(modifier = Modifier.height(620.dp)) {
-        Column(modifier = Modifier.weight(1f)) {
-            ProductCategoryContent(state = state)
-        }
-    }
-}
-
-@Composable
-fun LaptopScreen(
-    modifier: Modifier = Modifier,
-    viewModel: LaptopViewModel = hiltViewModel()
-) {
-    viewModel.init()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    Row(modifier = Modifier.height(620.dp)) {
-        Column(modifier = Modifier.weight(1f)) {
-            ProductCategoryContent(state = state)
-        }
-    }
-}
-
-@Composable
 internal fun ProductCategoryContent(
-    state: ProductCategoryViewState
+    state: ProductCategoryViewState,
+    onEvent: (ProductListEvent) -> Unit
 ) {
     var isLoading by remember { mutableStateOf(state.isLoading) }
 
     LaunchedEffect(key1 = true) {
-        delay(1200)
+        delay(1000)
         isLoading = false
     }
 
@@ -75,7 +48,10 @@ internal fun ProductCategoryContent(
                     ProductCard(
                         modifier = Modifier
                             .width(194.dp)
-                            .fillMaxHeight(),
+                            .fillMaxHeight()
+                            .clickable {
+                                onEvent(ProductListEvent.OnProductClick(product.id))
+                            },
                         product = product
                     )
                 })
