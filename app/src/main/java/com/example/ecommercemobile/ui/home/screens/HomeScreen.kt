@@ -13,7 +13,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.ecommercemobile.ui.utils.UIEvent
@@ -26,46 +28,67 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
 
     var items = remember { mutableStateListOf("Smartphone", "Laptop") }
 
-    Scaffold(modifier = Modifier.fillMaxSize(),
+    Scaffold(modifier = Modifier.fillMaxSize(), containerColor = Color.White,
         topBar = {
-            SearchBar(
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                shape = SearchBarDefaults.fullScreenShape,
-                query = text,
-                onQueryChange = { text = it },
-                onSearch = {
-                    items.add(text)
-                    active = false
-                },
-                active = active,
-                onActiveChange = { active = it },
-                placeholder = { Text("Search") },
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
-                },
-                trailingIcon = {
-                    if (active) {
-                        Icon(modifier = Modifier.clickable {
-                            if (text.isNotEmpty()) {
-                                text = ""
-                            } else {
-                                active = false
-                            }
-                        }, imageVector = Icons.Default.Close, contentDescription = "Close Icon")
+                    .fillMaxWidth()
+                    .padding(horizontal = if (active) 0.dp else 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SearchBar(
+                    modifier = if (!active) Modifier
+                        .padding(bottom = 12.dp)
+                        .height(48.dp)
+                        .weight(1f)
+                    else Modifier.weight(1f),
+                    shape = SearchBarDefaults.fullScreenShape,
+                    query = text,
+                    onQueryChange = { text = it },
+                    onSearch = {
+                        items.add(text)
+                        active = false
+                    },
+                    active = active,
+                    onActiveChange = { active = it },
+                    placeholder = { Text("Search") },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
+                    },
+                    trailingIcon = {
+                        if (active) {
+                            Icon(modifier = Modifier.clickable {
+                                if (text.isNotEmpty()) {
+                                    text = ""
+                                } else {
+                                    active = false
+                                }
+                            }, imageVector = Icons.Default.Close, contentDescription = "Close Icon")
+                        }
+                    }
+                ) {
+                    items.forEach {
+                        Row(
+                            modifier = Modifier
+                                .padding(all = 14.dp)
+                                .zIndex(1f)
+                        ) {
+                            Icon(
+                                modifier = Modifier.padding(end = 10.dp),
+                                imageVector = Icons.Default.History,
+                                contentDescription = "History Icon"
+                            )
+                            Text(text = it)
+                        }
                     }
                 }
-            ) {
-                items.forEach {
-                    Row(modifier = Modifier
-                        .padding(all = 14.dp)
-                        .zIndex(1f)) {
+                if (!active) {
+                    IconButton(onClick = { /*TODO*/ }) {
                         Icon(
-                            modifier = Modifier.padding(end = 10.dp),
-                            imageVector = Icons.Default.History,
-                            contentDescription = "History Icon"
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "Shopping Cart Icon"
                         )
-                        Text(text = it)
                     }
                 }
             }
@@ -75,7 +98,7 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                containerColor = MaterialTheme.colorScheme.surface
             ) {
                 BottomNavigationItem(
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home Icon") },
