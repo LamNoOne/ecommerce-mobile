@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -23,7 +23,6 @@ import com.example.ecommercemobile.ui.theme.EcommerceMobileTheme
 import com.example.ecommercemobile.utils.Event
 import com.example.ecommercemobile.utils.EventBus
 import com.example.ecommercemobile.utils.Routes
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,13 +31,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             EcommerceMobileTheme {
-                val systemUIController = rememberSystemUiController()
-                val darkTheme = isSystemInDarkTheme()
-                SideEffect {
-                    systemUIController.setSystemBarsColor(
-                        color = if(darkTheme) Color.LightGray else Color.White
-                    )
-                }
                 // A surface container using the 'background' color from the theme
                 val lifecycle = LocalLifecycleOwner.current.lifecycle
                 LaunchedEffect(key1 = lifecycle) {
@@ -56,9 +48,12 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-                Surface {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = Routes.HOME ) {
+                    NavHost(navController = navController, startDestination = Routes.HOME) {
                         composable(Routes.HOME) {
                             HomeScreen(
                                 onNavigate = {
@@ -74,7 +69,11 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) {
-                            ProductDetailScreen()
+                            ProductDetailScreen(
+                                onPopBackStack = { navController.popBackStack() },
+                                onNavigate = {
+                                    navController.navigate(it.route)
+                                })
                         }
                     }
                 }

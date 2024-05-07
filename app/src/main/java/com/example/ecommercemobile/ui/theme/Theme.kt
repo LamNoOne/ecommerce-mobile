@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColorScheme(
     primary = Purple200,
@@ -36,6 +38,13 @@ fun EcommerceMobileTheme(
         DarkColorPalette
     } else {
         LightColorPalette
+    }
+
+    val systemUIController = rememberSystemUiController()
+    SideEffect {
+        systemUIController.setSystemBarsColor(
+            color = colors.surfaceContainerLow
+        )
     }
 
     MaterialTheme(

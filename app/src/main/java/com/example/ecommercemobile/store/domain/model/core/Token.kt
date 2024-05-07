@@ -5,7 +5,11 @@ import androidx.room.PrimaryKey
 import com.example.ecommercemobile.utils.Constants
 
 @Entity
-data class Token(
+data class Auth(
+    val userId: Int,
+    val username: String,
+    val email: String,
+    val image: String,
     val accessToken: String,
     val refreshToken: String,
     @PrimaryKey val id: Int = Constants.TOKEN_UID

@@ -15,7 +15,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.ecommercemobile.ui.utils.UIEvent
@@ -28,7 +27,7 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
 
     var items = remember { mutableStateListOf("Smartphone", "Laptop") }
 
-    Scaffold(modifier = Modifier.fillMaxSize(), containerColor = Color.White,
+    Scaffold(modifier = Modifier.fillMaxSize(), containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         topBar = {
             Row(
                 modifier = Modifier
@@ -84,7 +83,7 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
                     }
                 }
                 if (!active) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {  }) {
                         Icon(
                             imageVector = Icons.Default.ShoppingCart,
                             contentDescription = "Shopping Cart Icon"

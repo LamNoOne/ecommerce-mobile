@@ -24,7 +24,7 @@ internal fun ProductCategoryContent(
     var isLoading by remember { mutableStateOf(state.isLoading) }
 
     LaunchedEffect(key1 = true) {
-        delay(1000)
+        delay(500)
         isLoading = false
     }
 
