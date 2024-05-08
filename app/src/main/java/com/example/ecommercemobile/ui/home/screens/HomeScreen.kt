@@ -25,7 +25,7 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
 
     var active by remember { mutableStateOf(false) }
 
-    var items = remember { mutableStateListOf("Smartphone", "Laptop") }
+    var items = remember { mutableStateListOf("") }
 
     Scaffold(modifier = Modifier.fillMaxSize(), containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         topBar = {

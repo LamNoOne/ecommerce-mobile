@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 fun AccessoryScreen(
     modifier: Modifier = Modifier,
     onNavigate: (UIEvent.Navigate) -> Unit,
+    title: String = "",
     viewModel: AccessoryViewModel = hiltViewModel(),
 ) {
     viewModel.init()
@@ -47,7 +48,7 @@ fun AccessoryScreen(
     }
     Row(modifier = Modifier.height(620.dp)) {
         Column(modifier = Modifier.weight(1f)) {
-            ProductCategoryContent(state = state, onEvent = viewModel::onEvent)
+            ProductCategoryContent(state = state, onEvent = viewModel::onEvent, title = title)
         }
     }
 }

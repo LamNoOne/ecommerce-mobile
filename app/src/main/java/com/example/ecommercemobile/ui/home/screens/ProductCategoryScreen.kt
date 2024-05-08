@@ -19,7 +19,8 @@ import kotlinx.coroutines.delay
 @Composable
 internal fun ProductCategoryContent(
     state: ProductCategoryViewState,
-    onEvent: (ProductListEvent) -> Unit
+    onEvent: (ProductListEvent) -> Unit,
+    title: String = ""
 ) {
     var isLoading by remember { mutableStateOf(state.isLoading) }
 
@@ -29,11 +30,19 @@ internal fun ProductCategoryContent(
     }
 
     state.products.forEach { (category, products) ->
-        Text(
-            text = category,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(8.dp)
-        )
+        if (title.isBlank()) {
+            Text(
+                text = category,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+        } else {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
         LazyHorizontalGrid(
             rows = GridCells.Fixed(2),
             verticalArrangement = Arrangement.spacedBy(8.dp),
