@@ -27,7 +27,12 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
 
     var items = remember { mutableStateListOf("") }
 
-    Scaffold(modifier = Modifier.fillMaxSize(), containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+    val isLogged by remember {
+        mutableStateOf(false)
+    }
+
+    Scaffold(modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         topBar = {
             Row(
                 modifier = Modifier
@@ -83,7 +88,7 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
                     }
                 }
                 if (!active) {
-                    IconButton(onClick = {  }) {
+                    IconButton(onClick = { }) {
                         Icon(
                             imageVector = Icons.Default.ShoppingCart,
                             contentDescription = "Shopping Cart Icon"
@@ -122,12 +127,21 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
                     selected = false,
                     onClick = { }
                 )
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
-                    label = { Text("Profile") },
-                    selected = false,
-                    onClick = { }
-                )
+                if (isLogged) {
+                    BottomNavigationItem(
+                        icon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
+                        label = { Text("Profile") },
+                        selected = false,
+                        onClick = { }
+                    )
+                } else {
+                    BottomNavigationItem(
+                        icon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
+                        label = { Text("Log in") },
+                        selected = false,
+                        onClick = { }
+                    )
+                }
             }
         }
     ) {
