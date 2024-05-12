@@ -17,10 +17,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.ecommercemobile.ui.home.events.CoreEvent
+import com.example.ecommercemobile.ui.home.viewmodels.CoreViewModel
 import com.example.ecommercemobile.ui.utils.UIEvent
 
 @Composable
-fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
+fun HomeScreen(
+    onNavigate: (UIEvent.Navigate) -> Unit,
+    coreViewModel: CoreViewModel = hiltViewModel()
+) {
+
+    LaunchedEffect(key1 = true) {
+        coreViewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.Navigate -> onNavigate(event)
+                else -> Unit
+            }
+        }
+    }
+
     var text by remember { mutableStateOf("") }
 
     var active by remember { mutableStateOf(false) }
@@ -108,13 +124,13 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home Icon") },
                     label = { Text("Home") },
                     selected = true,
-                    onClick = { }
+                    onClick = { coreViewModel.onEvent(CoreEvent.OnHomeClick) }
                 )
                 BottomNavigationItem(
                     icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorite Icon") },
                     label = { Text("Favorite") },
                     selected = false,
-                    onClick = { }
+                    onClick = { coreViewModel.onEvent(CoreEvent.OnFavoriteClick) }
                 )
                 BottomNavigationItem(
                     icon = {
@@ -125,21 +141,21 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
                     },
                     label = { Text("Cart") },
                     selected = false,
-                    onClick = { }
+                    onClick = { coreViewModel.onEvent(CoreEvent.OnCartClick) }
                 )
                 if (isLogged) {
                     BottomNavigationItem(
                         icon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
                         label = { Text("Profile") },
                         selected = false,
-                        onClick = { }
+                        onClick = { coreViewModel.onEvent(CoreEvent.OnProfileClick) }
                     )
                 } else {
                     BottomNavigationItem(
                         icon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
                         label = { Text("Log in") },
                         selected = false,
-                        onClick = { }
+                        onClick = { coreViewModel.onEvent(CoreEvent.OnLoginClick) }
                     )
                 }
             }
@@ -156,6 +172,7 @@ fun HomeScreen(onNavigate: (UIEvent.Navigate) -> Unit) {
         ) {
             item {
                 Column(modifier = Modifier.fillMaxSize()) {
+                    CategoryScreen(modifier = Modifier.fillMaxSize(), onNavigate = onNavigate)
                     SmartPhoneScreen(
                         modifier = Modifier.fillMaxSize(),
                         onNavigate = onNavigate

@@ -12,8 +12,11 @@ interface ProductsApi {
     @GET("products")
     suspend fun getProducts(
         @Query("name") name: String?,
-        @Query("_page") page: Int,
-        @Query("_limit") limit: Int
+        @Query("categoryId") categoryId: Int?,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+        @Query("sortBy") sortBy: String?,
+        @Query("order") order: String?
     ): Response<MetadataProducts>
 
     @GET("products/get-product")
@@ -24,7 +27,7 @@ interface ProductsApi {
     @GET("categories/get-products")
     suspend fun getProductsByCategory(
         @Query("id") id: Int,
-        @Query("_page") page: Int,
-        @Query("_limit") limit: Int
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
     ): Response<MetadataProductCategory>
 }

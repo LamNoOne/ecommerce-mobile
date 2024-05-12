@@ -11,8 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.ecommercemobile.ui.home.ProductListEvent
 import com.example.ecommercemobile.ui.home.components.ProductCard
+import com.example.ecommercemobile.ui.home.events.ProductListEvent
+import com.example.ecommercemobile.ui.home.viewstates.ProductCategoryViewState
 import com.example.ecommercemobile.ui.utils.ShimmerListItem
 import kotlinx.coroutines.delay
 

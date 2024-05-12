@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">EcommerceMobile</string>
+    <string name="app_logo">Ecommerce Mobile</string>
+    <string name="the_tolet">The SE-SHOP</string>
+    <string name="find_house">Find House</string>
+    <string name="login">Login</string>
 </resources>

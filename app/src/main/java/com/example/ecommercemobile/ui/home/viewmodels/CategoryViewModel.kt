@@ -2,12 +2,12 @@ package com.example.ecommercemobile.ui.home.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ecommercemobile.store.domain.repository.ProductsRepository
-import com.example.ecommercemobile.ui.home.events.ProductListEvent
-import com.example.ecommercemobile.ui.home.viewstates.ProductCategoryViewState
+import com.example.ecommercemobile.store.domain.repository.CategoriesRepository
+import com.example.ecommercemobile.ui.home.events.CategoryEvent
+import com.example.ecommercemobile.ui.home.viewstates.CategoryViewState
 import com.example.ecommercemobile.ui.utils.UIEvent
+import com.example.ecommercemobile.ui.utils.sendEvent
 import com.example.ecommercemobile.utils.Event
-import com.example.ecommercemobile.utils.EventBus.sendEvent
 import com.example.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -18,13 +18,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@Suppress("UNCHECKED_CAST")
 @HiltViewModel
-class TVViewModel @Inject constructor(
-    private val productsRepository: ProductsRepository,
+class CategoryViewModel @Inject constructor(
+    private val categoryRepository: CategoriesRepository
 ) : ViewModel() {
     // set mutable state
-    private var _state = MutableStateFlow(ProductCategoryViewState())
+    private var _state = MutableStateFlow(CategoryViewState())
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -32,23 +31,19 @@ class TVViewModel @Inject constructor(
     // get immutable one
     val state = _state.asStateFlow()
 
-
-    fun init() {
-        getProductCategory(7)
+    init {
+        getCategories()
     }
 
-    private fun getProductCategory(id: Int) {
+    private fun getCategories() {
         viewModelScope.launch {
             _state.update {
                 it.copy(isLoading = true)
             }
-            productsRepository.getProductsByCategory(id,1, 20)
-                .onRight { products ->
-                    _state.update { currentState ->
-                        val updatedProducts = currentState.products.toMutableMap()
-                        val currentProducts = products.metadata.products
-                        updatedProducts[currentProducts.name] = currentProducts.products
-                        currentState.copy(products = updatedProducts)
+            categoryRepository.getCategories()
+                .onRight { categories ->
+                    _state.update {
+                        it.copy(categories = categories.metadata.categories)
                     }
                 }
                 .onLeft { err ->
@@ -63,13 +58,10 @@ class TVViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: ProductListEvent) {
-        when(event) {
-            is ProductListEvent.OnProductClick -> {
-                sendUIEvent(UIEvent.Navigate("${Routes.PRODUCT_DETAIL}?productId=${event.productId}"))
-            }
-            is ProductListEvent.OnWishListProductClick -> {
-                TODO("Not yet implemented")
+    fun onEvent(event: CategoryEvent) {
+        when (event) {
+            is CategoryEvent.OnCategoryClick -> {
+                sendUIEvent(UIEvent.Navigate("${Routes.PRODUCT}?categoryId=${event.categoryId}"))
             }
         }
     }

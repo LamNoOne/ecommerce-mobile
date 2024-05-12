@@ -18,7 +18,7 @@ import javax.inject.Singleton
 object AppModule {
 
     private val annotationInterceptor = AnnotationInterceptor()
-    val client = OkHttpClient().newBuilder().apply {
+    private val client = OkHttpClient().newBuilder().apply {
         addInterceptor(annotationInterceptor)
     }.build()
 

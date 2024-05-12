@@ -19,7 +19,7 @@ data class Product(
     val color: String?,
     val price: Int,
     val stockQuantity: Int,
-    val category: Category?,
+    val categoryId: Int?,
     val createdAt: String?,
     val updatedAt: String?,
 )

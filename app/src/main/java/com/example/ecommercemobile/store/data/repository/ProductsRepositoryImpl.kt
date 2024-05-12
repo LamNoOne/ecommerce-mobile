@@ -14,9 +14,16 @@ import javax.inject.Inject
 class ProductsRepositoryImpl @Inject constructor(
     private val productsApi: ProductsApi
 ) : ProductsRepository {
-    override suspend fun getProducts(name: String, page: Int, limit: Int): Either<NetworkError, Response<MetadataProducts>> {
+    override suspend fun getProducts(
+        name: String,
+        categoryId: Int,
+        page: Int,
+        limit: Int,
+        sortBy: String,
+        order: String
+    ): Either<NetworkError, Response<MetadataProducts>> {
         return Either.catch {
-            productsApi.getProducts(name, page, limit)
+            productsApi.getProducts(name, categoryId, page, limit, sortBy, order)
         }.mapLeft { it.toNetworkError() }
     }
 
@@ -27,7 +34,11 @@ class ProductsRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun getProductsByCategory(id: Int, page: Int, limit: Int): Either<NetworkError, Response<MetadataProductCategory>> {
+    override suspend fun getProductsByCategory(
+        id: Int,
+        page: Int,
+        limit: Int
+    ): Either<NetworkError, Response<MetadataProductCategory>> {
         return Either.catch {
             productsApi.getProductsByCategory(id, page, limit)
         }.mapLeft { it.toNetworkError() }

@@ -17,8 +17,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ecommercemobile.ui.auth.components.PortraitLoginScreen
+import com.example.ecommercemobile.ui.cart.CartScreen
+import com.example.ecommercemobile.ui.favorite.FavoriteScreen
 import com.example.ecommercemobile.ui.home.screens.HomeScreen
 import com.example.ecommercemobile.ui.product_detail.ProductDetailScreen
+import com.example.ecommercemobile.ui.products.ProductsScreen
+import com.example.ecommercemobile.ui.profile.ProfileScreen
 import com.example.ecommercemobile.ui.theme.EcommerceMobileTheme
 import com.example.ecommercemobile.utils.Event
 import com.example.ecommercemobile.utils.EventBus
@@ -74,6 +79,28 @@ class MainActivity : ComponentActivity() {
                                 onNavigate = {
                                     navController.navigate(it.route)
                                 })
+                        }
+                        composable(
+                            route = "${Routes.PRODUCT}?categoryId={categoryId}",
+                            arguments = listOf(
+                                navArgument("categoryId") {
+                                    type = NavType.IntType
+                                }
+                            )
+                        ) {
+                            ProductsScreen()
+                        }
+                        composable(Routes.CART) {
+                            CartScreen()
+                        }
+                        composable(Routes.FAVORITE) {
+                            FavoriteScreen()
+                        }
+                        composable(Routes.PROFILE) {
+                            ProfileScreen()
+                        }
+                        composable(Routes.LOGIN) {
+                            PortraitLoginScreen()
                         }
                     }
                 }

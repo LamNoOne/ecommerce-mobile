@@ -3,8 +3,8 @@ package com.example.ecommercemobile.ui.home.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommercemobile.store.domain.repository.ProductsRepository
-import com.example.ecommercemobile.ui.home.ProductListEvent
-import com.example.ecommercemobile.ui.home.screens.ProductCategoryViewState
+import com.example.ecommercemobile.ui.home.events.ProductListEvent
+import com.example.ecommercemobile.ui.home.viewstates.ProductCategoryViewState
 import com.example.ecommercemobile.ui.utils.UIEvent
 import com.example.ecommercemobile.utils.Event
 import com.example.ecommercemobile.utils.EventBus.sendEvent

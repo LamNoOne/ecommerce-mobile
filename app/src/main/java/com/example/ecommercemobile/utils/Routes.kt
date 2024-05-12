@@ -3,8 +3,9 @@ package com.example.ecommercemobile.utils
 object Routes {
     const val HOME = "home"
     const val PRODUCT_DETAIL = "product_detail"
-    const val PRODUCT = "product"
+    const val PRODUCT = "products"
     const val CART = "cart"
+    const val FAVORITE = "favorite"
     const val WISH_LIST = "wish_list"
     const val ORDER_HISTORY = "order_history"
     const val PROFILE = "profile"

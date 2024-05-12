@@ -1,4 +1,4 @@
-package com.example.ecommercemobile.ui.home.screens
+package com.example.ecommercemobile.ui.home.viewstates
 
 import com.example.ecommercemobile.store.domain.model.core.Product
 
