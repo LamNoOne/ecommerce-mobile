@@ -2,7 +2,7 @@ package com.example.ecommercemobile.ui.auth.components
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -12,13 +12,15 @@ import androidx.compose.ui.text.font.FontWeight
 fun LoginTextField(
     modifier: Modifier = Modifier,
     label: String,
-    trailing: String
+    trailing: String,
+    text: String,
+    onValueChange: (String) -> Unit,
 ) {
     val uiColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     TextField(
-        value = "",
-        onValueChange = {},
+        value = text,
+        onValueChange = { onValueChange(it) },
         modifier = modifier,
         label = {
             Text(text = label, style = MaterialTheme.typography.labelMedium, color = uiColor)

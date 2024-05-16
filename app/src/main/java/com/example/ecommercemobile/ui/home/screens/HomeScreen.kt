@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.ecommercemobile.ui.auth.AuthViewModel
 import com.example.ecommercemobile.ui.home.events.CoreEvent
 import com.example.ecommercemobile.ui.home.viewmodels.CoreViewModel
 import com.example.ecommercemobile.ui.utils.UIEvent
@@ -25,7 +26,8 @@ import com.example.ecommercemobile.ui.utils.UIEvent
 @Composable
 fun HomeScreen(
     onNavigate: (UIEvent.Navigate) -> Unit,
-    coreViewModel: CoreViewModel = hiltViewModel()
+    coreViewModel: CoreViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(key1 = true) {
@@ -42,10 +44,6 @@ fun HomeScreen(
     var active by remember { mutableStateOf(false) }
 
     var items = remember { mutableStateListOf("") }
-
-    val isLogged by remember {
-        mutableStateOf(false)
-    }
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -143,10 +141,10 @@ fun HomeScreen(
                     selected = false,
                     onClick = { coreViewModel.onEvent(CoreEvent.OnCartClick) }
                 )
-                if (isLogged) {
+                if (authViewModel.auth != null) {
                     BottomNavigationItem(
                         icon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
-                        label = { Text("Profile") },
+                        label = { Text(authViewModel.auth!!.firstName) },
                         selected = false,
                         onClick = { coreViewModel.onEvent(CoreEvent.OnProfileClick) }
                     )

@@ -1,4 +1,4 @@
-package com.example.ecommercemobile.ui.home.events
+package com.example.ecommercemobile.ui.events
 
 sealed class ProductListEvent {
     data class OnProductClick(val productId: Int): ProductListEvent()

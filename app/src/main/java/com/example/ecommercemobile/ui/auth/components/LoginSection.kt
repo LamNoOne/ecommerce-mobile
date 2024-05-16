@@ -14,23 +14,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.ecommercemobile.store.domain.model.core.LoginCredentials
+import com.example.ecommercemobile.ui.auth.AuthEvent
+import com.example.ecommercemobile.ui.auth.AuthViewModel
 import com.example.ecommercemobile.ui.theme.BlueGray
 
 @Composable
-fun LoginSection() {
-    LoginTextField(label = "Email", trailing = "", modifier = Modifier.fillMaxWidth())
+fun LoginSection(viewModel: AuthViewModel) {
+
+    LoginTextField(
+        label = "Username",
+        trailing = "",
+        modifier = Modifier.fillMaxWidth(),
+        text = viewModel.username,
+        onValueChange = { viewModel.onEvent(AuthEvent.OnUsernameChange(it)) }
+    )
     Spacer(modifier = Modifier.height(15.dp))
     LoginTextField(
+        modifier = Modifier.fillMaxWidth(),
         label = "Password",
         trailing = "Forgot?",
-        modifier = Modifier.fillMaxWidth()
+        text = viewModel.password,
+        onValueChange = { viewModel.onEvent(AuthEvent.OnPasswordChange(it)) },
     )
     Spacer(modifier = Modifier.height(20.dp))
     Button(
-        onClick = {},
+        onClick = {
+            viewModel.onEvent(
+                AuthEvent.OnLoginClick(
+                    LoginCredentials(
+                        username = viewModel.username,
+                        password = viewModel.password
+                    )
+                )
+            )
+        },
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp),
+            .height(36.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isSystemInDarkTheme()) BlueGray else Color.Black,
             contentColor = Color.White

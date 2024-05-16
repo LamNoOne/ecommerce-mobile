@@ -17,7 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.ecommercemobile.ui.auth.components.PortraitLoginScreen
+import com.example.ecommercemobile.ui.auth.AuthScreen
 import com.example.ecommercemobile.ui.cart.CartScreen
 import com.example.ecommercemobile.ui.favorite.FavoriteScreen
 import com.example.ecommercemobile.ui.home.screens.HomeScreen
@@ -81,14 +81,31 @@ class MainActivity : ComponentActivity() {
                                 })
                         }
                         composable(
-                            route = "${Routes.PRODUCT}?categoryId={categoryId}",
+                            route = "${Routes.PRODUCT}?categoryId={categoryId}&search={search}&page={page}&limit={limit}&sortBy={sortBy}&order={order}",
                             arguments = listOf(
                                 navArgument("categoryId") {
                                     type = NavType.IntType
+                                },
+                                navArgument("search") {
+                                    nullable = true
+                                },
+                                navArgument("page") {
+                                    nullable = true
+                                },
+                                navArgument("limit") {
+                                    nullable = true
+                                },
+                                navArgument("sortBy") {
+                                    nullable = true
+                                },
+                                navArgument("order") {
+                                    nullable = true
                                 }
                             )
                         ) {
-                            ProductsScreen()
+                            ProductsScreen(onNavigate = {
+                                navController.navigate(it.route)
+                            })
                         }
                         composable(Routes.CART) {
                             CartScreen()
@@ -100,7 +117,12 @@ class MainActivity : ComponentActivity() {
                             ProfileScreen()
                         }
                         composable(Routes.LOGIN) {
-                            PortraitLoginScreen()
+                            AuthScreen(
+                                onPopBackStack = { navController.popBackStack() },
+                                onNavigate = {
+                                    navController.navigate(it.route)
+                                }
+                            )
                         }
                     }
                 }

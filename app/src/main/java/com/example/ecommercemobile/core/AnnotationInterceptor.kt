@@ -1,12 +1,32 @@
 package com.example.ecommercemobile.core
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.example.ecommercemobile.store.domain.model.core.Auth
+import com.example.ecommercemobile.store.domain.repository.AuthRepository
 import com.example.ecommercemobile.utils.Constants
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import retrofit2.Invocation
+import javax.inject.Inject
 
-class AnnotationInterceptor : Interceptor {
+class AnnotationInterceptor: Interceptor {
+    @Inject
+    lateinit var authRepository: AuthRepository
+
+    private var authData by mutableStateOf<Auth?>(null)
+
+    init {
+        runBlocking {
+            authRepository.getAuth(1)?.let {
+                this@AnnotationInterceptor.authData = it
+            }
+        }
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         val invocation =
@@ -38,12 +58,16 @@ class AnnotationInterceptor : Interceptor {
     private fun addAuthHeader(request: Request): Request {
         val token = getTokenFromDB()
         return request.newBuilder()
+            .addHeader("x-user-id", getUserIdFromDB().toString())
             .addHeader("Authorization", "Bearer $token")
             .build()
     }
 
     private fun getTokenFromDB(): String {
-        // get Token from Room DB -> Handle later...
-        return "token"
+        return authData?.accessToken ?: ""
+    }
+
+    private fun getUserIdFromDB(): Int {
+        return authData?.userId ?: 0
     }
 }

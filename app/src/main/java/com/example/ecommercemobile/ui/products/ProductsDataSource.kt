@@ -38,7 +38,7 @@ class ProductsDataSource(
             LoadResult.Page(
                 data = products,
                 prevKey = null,
-                nextKey = if (response.isRight() && products.isNotEmpty()) ((response as Either.Right<Response<MetadataProducts>>).value.metadata.page!! + 1) else null
+                nextKey = if (response.isRight() && products.isNotEmpty()) ((response as Either.Right<Response<MetadataProducts>>).value.metadata?.page!! + 1) else null
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

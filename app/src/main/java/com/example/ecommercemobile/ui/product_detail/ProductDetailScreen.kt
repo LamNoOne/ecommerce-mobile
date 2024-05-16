@@ -4,11 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddShoppingCart
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Payment
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -69,7 +73,7 @@ fun ProductDetailScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.width(64.dp),
+                modifier = Modifier.width(56.dp),
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
@@ -77,6 +81,53 @@ fun ProductDetailScreen(
     } else {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    backgroundColor = Color.Transparent,
+                    elevation = 0.dp,
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        IconButton(
+                            onClick = {
+                                onPopBackStack()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBackIosNew,
+                                contentDescription = "Back"
+                            )
+                        }
+
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Box() {
+                                Text(
+                                    text = "1",
+                                    color = Color.White,
+                                    fontSize = 8.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier
+                                        .background(
+                                            MaterialTheme.colorScheme.error,
+                                            shape = CircleShape
+                                        )
+                                        .badgeLayout()
+                                        .padding(end = 0.dp)
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.ShoppingCart,
+                                    contentDescription = "Shopping cart"
+                                )
+                            }
+                        }
+                    }
+                }
+            },
             bottomBar = {
                 BottomAppBar(
                     modifier = Modifier
@@ -140,7 +191,9 @@ fun ProductDetailScreen(
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Price: ", fontSize = 16.sp, fontWeight = FontWeight.Normal)
@@ -152,7 +205,11 @@ fun ProductDetailScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row(modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 8.dp)
+                    ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -271,9 +328,25 @@ fun ProductDetailScreen(
                             }
                         }
                     }
-                    AccessoryScreen(onNavigate = onNavigate, title = "Accessories purchased together")
+                    AccessoryScreen(
+                        onNavigate = onNavigate,
+                        title = "Accessories purchased together"
+                    )
                 }
             }
         }
     }
 }
+
+fun Modifier.badgeLayout() =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+
+        // based on the expectation of only one line of text
+        val minPadding = placeable.height / 4
+
+        val width = maxOf(placeable.width + minPadding, placeable.height) / 2
+        layout(width, placeable.height / 2) {
+            placeable.place((width - placeable.width) / 2, -placeable.height / 4)
+        }
+    }
