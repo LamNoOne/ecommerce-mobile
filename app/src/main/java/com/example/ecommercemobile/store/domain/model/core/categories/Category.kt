@@ -1,4 +1,4 @@
-package com.example.ecommercemobile.store.domain.model.core
+package com.example.ecommercemobile.store.domain.model.core.categories
 
 data class Category(
     val id: Int,

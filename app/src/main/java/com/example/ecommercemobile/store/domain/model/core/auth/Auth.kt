@@ -1,4 +1,4 @@
-package com.example.ecommercemobile.store.domain.model.core
+package com.example.ecommercemobile.store.domain.model.core.auth
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

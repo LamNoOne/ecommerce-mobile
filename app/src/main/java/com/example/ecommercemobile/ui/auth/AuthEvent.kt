@@ -1,7 +1,7 @@
 package com.example.ecommercemobile.ui.auth
 
-import com.example.ecommercemobile.store.domain.model.core.LoginCredentials
-import com.example.ecommercemobile.store.domain.model.core.SignupCredentials
+import com.example.ecommercemobile.store.domain.model.core.auth.LoginCredentials
+import com.example.ecommercemobile.store.domain.model.core.auth.SignupCredentials
 
 sealed class AuthEvent {
     data class OnUsernameChange(val username: String) : AuthEvent()

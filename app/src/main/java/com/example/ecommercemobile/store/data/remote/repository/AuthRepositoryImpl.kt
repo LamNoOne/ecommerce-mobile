@@ -1,4 +1,4 @@
-package com.example.ecommercemobile.store.data.repository
+package com.example.ecommercemobile.store.data.remote.repository
 
 import arrow.core.Either
 import com.example.ecommercemobile.core.NetworkError
@@ -7,8 +7,8 @@ import com.example.ecommercemobile.store.data.remote.AuthApi
 import com.example.ecommercemobile.store.data.remote.AuthDao
 import com.example.ecommercemobile.store.domain.model.MetadataAuth
 import com.example.ecommercemobile.store.domain.model.Response
-import com.example.ecommercemobile.store.domain.model.core.Auth
-import com.example.ecommercemobile.store.domain.model.core.LoginCredentials
+import com.example.ecommercemobile.store.domain.model.core.auth.Auth
+import com.example.ecommercemobile.store.domain.model.core.auth.LoginCredentials
 import com.example.ecommercemobile.store.domain.repository.AuthRepository
 import javax.inject.Inject
 

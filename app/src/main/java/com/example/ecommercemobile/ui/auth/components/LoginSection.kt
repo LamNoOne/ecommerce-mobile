@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.ecommercemobile.store.domain.model.core.LoginCredentials
+import com.example.ecommercemobile.store.domain.model.core.auth.LoginCredentials
 import com.example.ecommercemobile.ui.auth.AuthEvent
 import com.example.ecommercemobile.ui.auth.AuthViewModel
 import com.example.ecommercemobile.ui.theme.BlueGray

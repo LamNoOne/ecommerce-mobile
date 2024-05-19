@@ -6,7 +6,7 @@ import arrow.core.Either
 import com.example.ecommercemobile.store.domain.model.MetadataProducts
 import com.example.ecommercemobile.store.domain.model.ProductParams
 import com.example.ecommercemobile.store.domain.model.Response
-import com.example.ecommercemobile.store.domain.model.core.Product
+import com.example.ecommercemobile.store.domain.model.core.products.Product
 import com.example.ecommercemobile.store.domain.repository.ProductsRepository
 
 class ProductsDataSource(

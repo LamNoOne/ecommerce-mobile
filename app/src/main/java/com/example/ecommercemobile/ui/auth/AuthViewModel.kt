@@ -9,8 +9,8 @@ import androidx.lifecycle.viewModelScope
 import arrow.core.Either
 import com.example.ecommercemobile.store.domain.model.MetadataAuth
 import com.example.ecommercemobile.store.domain.model.Response
-import com.example.ecommercemobile.store.domain.model.core.Auth
-import com.example.ecommercemobile.store.domain.model.core.LoginCredentials
+import com.example.ecommercemobile.store.domain.model.core.auth.Auth
+import com.example.ecommercemobile.store.domain.model.core.auth.LoginCredentials
 import com.example.ecommercemobile.store.domain.repository.AuthRepository
 import com.example.ecommercemobile.ui.utils.UIEvent
 import com.example.ecommercemobile.utils.Constants

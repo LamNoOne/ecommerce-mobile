@@ -1,4 +1,4 @@
-package com.example.ecommercemobile.store.data.repository
+package com.example.ecommercemobile.store.data.remote.repository
 
 import arrow.core.Either
 import com.example.ecommercemobile.core.NetworkError

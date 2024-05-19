@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
-import com.example.ecommercemobile.store.domain.model.core.Product
+import com.example.ecommercemobile.store.domain.model.core.products.Product
 import com.example.ecommercemobile.ui.components.RatingBar
 
 @Composable

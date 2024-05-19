@@ -1,5 +1,5 @@
 package com.example.ecommercemobile.store.domain.model
-import com.example.ecommercemobile.store.domain.model.core.ProductCategory
+import com.example.ecommercemobile.store.domain.model.core.products.ProductCategory
 
 data class MetadataProductCategory(
     val page: Int? = null,

@@ -4,11 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.example.ecommercemobile.core.AnnotationInterceptor
 import com.example.ecommercemobile.store.data.auth.AuthDatabase
-import com.example.ecommercemobile.store.data.remote.AuthApi
-import com.example.ecommercemobile.store.data.remote.CategoriesApi
-import com.example.ecommercemobile.store.data.remote.ProductsApi
-import com.example.ecommercemobile.store.data.repository.AuthRepositoryImpl
-import com.example.ecommercemobile.store.domain.repository.AuthRepository
+import com.example.ecommercemobile.store.data.remote.*
 import com.example.ecommercemobile.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -24,6 +20,7 @@ import javax.inject.Singleton
 object AppModule {
 
     private val annotationInterceptor = AnnotationInterceptor()
+
     private val client = OkHttpClient().newBuilder().apply {
         addInterceptor(annotationInterceptor)
     }.build()
@@ -52,6 +49,17 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideCartApi(): CartApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create().asLenient())
+            .client(client)
+            .build()
+            .create(CartApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthApi(): AuthApi {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
@@ -73,7 +81,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(db: AuthDatabase, authApi: AuthApi): AuthRepository {
-        return AuthRepositoryImpl(db.dao, authApi)
+    fun provideAuthDao(db: AuthDatabase): AuthDao {
+        return db.dao
     }
+
+
+//    @Provides
+//    @Singleton
+//    fun provideAuthRepository(db: AuthDatabase, authApi: AuthApi): AuthRepository {
+//        return AuthRepositoryImpl(db.dao, authApi)
+//    }
 }

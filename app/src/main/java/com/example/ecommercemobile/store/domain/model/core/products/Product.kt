@@ -1,4 +1,4 @@
-package com.example.ecommercemobile.store.domain.model.core
+package com.example.ecommercemobile.store.domain.model.core.products
 
 data class Product(
     val id: Int,
@@ -18,7 +18,7 @@ data class Product(
     val connectivity: String?,
     val color: String?,
     val price: Int,
-    val stockQuantity: Int,
+    val stockQuantity: Int?,
     val categoryId: Int?,
     val createdAt: String?,
     val updatedAt: String?,

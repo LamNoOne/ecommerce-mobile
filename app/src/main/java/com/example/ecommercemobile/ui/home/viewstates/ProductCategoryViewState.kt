@@ -1,6 +1,6 @@
 package com.example.ecommercemobile.ui.home.viewstates
 
-import com.example.ecommercemobile.store.domain.model.core.Product
+import com.example.ecommercemobile.store.domain.model.core.products.Product
 
 data class ProductCategoryViewState(
     val isLoading: Boolean = false,

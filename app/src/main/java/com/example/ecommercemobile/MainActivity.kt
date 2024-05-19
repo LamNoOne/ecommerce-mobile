@@ -108,7 +108,11 @@ class MainActivity : ComponentActivity() {
                             })
                         }
                         composable(Routes.CART) {
-                            CartScreen()
+                            CartScreen(
+                                onPopBackStack = { navController.popBackStack() },
+                                onNavigate = {
+                                    navController.navigate(it.route)
+                                })
                         }
                         composable(Routes.FAVORITE) {
                             FavoriteScreen()
