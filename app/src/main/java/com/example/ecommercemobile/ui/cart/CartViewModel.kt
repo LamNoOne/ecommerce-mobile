@@ -30,7 +30,6 @@ class CartViewModel @Inject constructor(
     private var _state = MutableStateFlow(CartViewState())
 
     private var auth by mutableStateOf<Auth?>(null)
-        private set
 
     private var _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -71,13 +70,35 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    private fun deleteProductFromCart(productId: Int) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(isLoading = true)
+            }
+            cartRepository.deleteProductFromCart(getHeaderMap(), productId)
+                .onRight { cart ->
+                    _state.update { currentState ->
+                        currentState.copy(cart = cart.metadata.cart)
+                    }
+                }
+                .onLeft { err ->
+                    _state.update {
+                        it.copy(error = err.error.message)
+                    }
+                }
+            _state.update {
+                it.copy(isLoading = false)
+            }
+        }
+    }
+
     fun onEvent(event: CartEvent) {
         when(event) {
             is CartEvent.OnCartProductClick -> {
                 sendUIEvent(UIEvent.Navigate("${Routes.PRODUCT_DETAIL}?productId=${event.productId}"))
             }
             is CartEvent.OnCartProductDelete -> {
-                /* TODO ("Not yet implement") */
+                deleteProductFromCart(event.productId)
             }
             is CartEvent.OnChangeProductQuantity -> {
                 /* TODO ("Not yet implement") */

@@ -11,12 +11,24 @@ interface CartRepository {
 
     suspend fun getCart(headers: Map<String, String>): Either<NetworkError, Response<MetadataCart>>
 
-    suspend fun addToCart(addCart: AddCart): Either<NetworkError, Response<MetadataCart>>
+    suspend fun addToCart(
+        headers: Map<String, String>,
+        addCart: AddCart
+    ): Either<NetworkError, Response<MetadataCart>>
 
-    suspend fun updateQuantityProduct(addCart: AddCart): Either<NetworkError, Response<MetadataCart>>
+    suspend fun updateQuantityProduct(
+        headers: Map<String, String>,
+        addCart: AddCart
+    ): Either<NetworkError, Response<MetadataCart>>
 
-    suspend fun deleteProductFromCart(productId: Int): Either<NetworkError, Response<MetadataCart>>
+    suspend fun deleteProductFromCart(
+        headers: Map<String, String>,
+        productId: Int
+    ): Either<NetworkError, Response<MetadataCart>>
 
-    suspend fun deleteProductsFromCart(deleteCart: DeleteCart): Either<NetworkError, Response<MetadataCart>>
+    suspend fun deleteProductsFromCart(
+        headers: Map<String, String>,
+        deleteCart: DeleteCart
+    ): Either<NetworkError, Response<MetadataCart>>
 
 }

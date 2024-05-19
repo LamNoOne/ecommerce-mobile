@@ -6,27 +6,47 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.ecommercemobile.store.domain.model.core.carts.ProductCart
+import com.example.ecommercemobile.ui.cart.CartEvent
 import com.example.ecommercemobile.ui.components.CounterButton
 
 @Composable
 fun ProductCart(
     modifier: Modifier = Modifier,
+    onPopBackStack: () -> Unit,
+    onEvent: (CartEvent) -> Unit,
     productCart: ProductCart
 ) {
     var checked by remember { mutableStateOf(false) }
 
     var valueCounter by remember {
-        mutableStateOf(0)
+        mutableStateOf(productCart.quantity)
     }
+
+    fun updateValueCounter(value: Int) {
+        valueCounter = value
+    }
+
+    ConfirmDialog(
+        onPopBackStack = onPopBackStack,
+        onEvent = onEvent,
+        changeQuantity = { updateValueCounter(it) },
+        productId = productCart.product.id,
+        quantity = valueCounter
+    )
+
+
 
     Row(
         modifier = Modifier
@@ -84,5 +104,57 @@ fun ProductCart(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ConfirmDialog(
+    onPopBackStack: () -> Unit,
+    changeQuantity: (Int) -> Unit,
+    onEvent: (CartEvent) -> Unit,
+    productId: Int,
+    quantity: Int
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (quantity == 0) showDialog = true
+
+    if (showDialog) {
+        androidx.compose.material.AlertDialog(
+            onDismissRequest = { showDialog = false },
+            backgroundColor = Color.White,
+            text = {
+                Text(
+                    text = "Do you want to delete this product from cart?",
+                    fontSize = 16.sp
+                )
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    changeQuantity(1)
+                }) {
+                    androidx.compose.material3.Text(
+                        text = "Cancel",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = androidx.compose.material.MaterialTheme.colors.primaryVariant
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    onEvent(CartEvent.OnCartProductDelete(productId))
+                }) {
+                    androidx.compose.material3.Text(
+                        text = "Yes",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = androidx.compose.material.MaterialTheme.colors.primaryVariant
+                    )
+                }
+            }
+        )
     }
 }

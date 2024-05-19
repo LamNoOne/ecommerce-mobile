@@ -26,7 +26,7 @@ fun DraggableThumbButton(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .shadow(8.dp, shape = CircleShape)
-            .size(20.dp)
+            .size(24.dp)
             .clip(CircleShape)
             .clickable { onClick() }
             .background(Color.Gray)

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Clear
@@ -13,7 +12,6 @@ import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -33,7 +31,7 @@ fun ButtonContainer(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxSize()
-            .clip(RoundedCornerShape(20.dp))
+//            .clip(RoundedCornerShape(20.dp))
             .background(Color.Black.copy(alpha = CONTAINER_BACKGROUND_ALPHA_INITIAL))
             .padding(horizontal = 8.dp)
     ) {

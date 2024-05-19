@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.ecommercemobile.ui.product_detail
 
 import androidx.compose.foundation.background
@@ -7,19 +9,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,11 +38,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.ecommercemobile.ui.components.CounterButton
 import com.example.ecommercemobile.ui.home.screens.AccessoryScreen
 import com.example.ecommercemobile.ui.product_detail.components.SpecificationItem
 import com.example.ecommercemobile.ui.utils.UIEvent
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(
     onPopBackStack: () -> Unit,
@@ -47,6 +56,12 @@ fun ProductDetailScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+    var valueCounter by remember {
+        mutableStateOf(0)
+    }
+
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -82,7 +97,7 @@ fun ProductDetailScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                TopAppBar(
+                androidx.compose.material.TopAppBar(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp),
@@ -144,7 +159,7 @@ fun ProductDetailScreen(
                         },
                         label = { androidx.compose.material.Text("Add to cart") },
                         selected = true,
-                        onClick = { }
+                        onClick = { isSheetOpen = true }
                     )
                     BottomNavigationItem(
                         icon = { Icon(Icons.Default.Payment, contentDescription = "Payment") },
@@ -332,6 +347,133 @@ fun ProductDetailScreen(
                         onNavigate = onNavigate,
                         title = "Accessories purchased together"
                     )
+                }
+            }
+            if (isSheetOpen) {
+                ModalBottomSheet(
+                    sheetState = sheetState,
+                    onDismissRequest = {
+                        isSheetOpen = false
+                    },
+                    containerColor = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(140.dp)
+                                .padding(horizontal = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            AsyncImage(
+                                model = state.product?.imageUrl,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .width(140.dp)
+                                    .aspectRatio(1f),
+                                contentScale = ContentScale.FillBounds
+                            )
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Bottom
+                            ) {
+                                Text(
+                                    text = state.product?.name ?: "",
+                                    color = Color.Black,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Price: ",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                    Text(
+                                        text = "$${state.product?.price.toString()}" ?: "",
+                                        color = Color.Red,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = "Quantity",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal
+                            )
+                            CounterButton(
+                                value = valueCounter.toString(),
+                                onValueIncreaseClick = {
+                                    valueCounter = minOf(valueCounter + 1, 99)
+                                },
+                                onValueDecreaseClick = {
+                                    valueCounter = maxOf(valueCounter - 1, 0)
+                                },
+                                onValueClearClick = {
+                                    valueCounter = 0
+                                },
+                                modifier = Modifier
+                                    .width(100.dp)
+                                    .height(32.dp)
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp)
+                                .background(Color.White)
+                                .padding(16.dp)
+                        ) {
+                            Button(
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(0.dp),
+                                onClick = {
+                                    viewModel.state.value.product?.let { it1 ->
+                                        ProductDetailEvent.OnAddToCartClick(
+                                            it1.id,
+                                            valueCounter
+                                        )
+                                    }?.let { it2 ->
+                                        viewModel.onEvent(
+                                            it2
+                                        )
+                                    }
+                                    runBlocking {
+                                        delay(500)
+                                        isSheetOpen = false
+                                    }
+                                }) {
+                                Text(
+                                    text = "Add to cart",
+                                    color = Color.White,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

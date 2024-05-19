@@ -18,14 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.ecommercemobile.datastore.AuthDataManager
-import com.example.ecommercemobile.datastore.AuthPreferences
 import com.example.ecommercemobile.ui.auth.AuthViewModel
 import com.example.ecommercemobile.ui.home.events.CoreEvent
 import com.example.ecommercemobile.ui.home.viewmodels.CoreViewModel
 import com.example.ecommercemobile.ui.utils.UIEvent
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
@@ -61,7 +57,6 @@ fun HomeScreen(
                 SearchBar(
                     modifier = if (!active) Modifier
                         .padding(bottom = 12.dp)
-                        .height(48.dp)
                         .weight(1f)
                     else Modifier.weight(1f),
                     shape = SearchBarDefaults.fullScreenShape,

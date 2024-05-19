@@ -13,34 +13,46 @@ import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
     private val cartApi: CartApi
-): CartRepository {
+) : CartRepository {
     override suspend fun getCart(headers: Map<String, String>): Either<NetworkError, Response<MetadataCart>> {
         return Either.catch {
             cartApi.getCart(headers)
         }.mapLeft { it.toNetworkError() }
     }
 
-    override suspend fun addToCart(addCart: AddCart): Either<NetworkError, Response<MetadataCart>> {
+    override suspend fun addToCart(
+        headers: Map<String, String>,
+        addCart: AddCart
+    ): Either<NetworkError, Response<MetadataCart>> {
         return Either.catch {
-            cartApi.addToCart(addCart)
+            cartApi.addToCart(headers, addCart)
         }.mapLeft { it.toNetworkError() }
     }
 
-    override suspend fun updateQuantityProduct(addCart: AddCart): Either<NetworkError, Response<MetadataCart>> {
+    override suspend fun updateQuantityProduct(
+        headers: Map<String, String>,
+        addCart: AddCart
+    ): Either<NetworkError, Response<MetadataCart>> {
         return Either.catch {
-            cartApi.updateQuantityProduct(addCart)
+            cartApi.updateQuantityProduct(headers, addCart)
         }.mapLeft { it.toNetworkError() }
     }
 
-    override suspend fun deleteProductFromCart(productId: Int): Either<NetworkError, Response<MetadataCart>> {
+    override suspend fun deleteProductFromCart(
+        headers: Map<String, String>,
+        productId: Int
+    ): Either<NetworkError, Response<MetadataCart>> {
         return Either.catch {
-            cartApi.deleteProductFromCart(productId)
+            cartApi.deleteProductFromCart(headers, productId)
         }.mapLeft { it.toNetworkError() }
     }
 
-    override suspend fun deleteProductsFromCart(deleteCart: DeleteCart): Either<NetworkError, Response<MetadataCart>> {
+    override suspend fun deleteProductsFromCart(
+        headers: Map<String, String>,
+        deleteCart: DeleteCart
+    ): Either<NetworkError, Response<MetadataCart>> {
         return Either.catch {
-            cartApi.deleteProductsFromCart(deleteCart)
+            cartApi.deleteProductsFromCart(headers, deleteCart)
         }.mapLeft { it.toNetworkError() }
     }
 }

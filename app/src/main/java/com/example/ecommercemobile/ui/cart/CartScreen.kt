@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ecommercemobile.ui.cart.components.ProductCart
@@ -57,9 +58,12 @@ fun CartScreen(
     }
     if (state.isLoading) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(2f)
+                .background(Color.Transparent),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.width(56.dp),
@@ -67,144 +71,150 @@ fun CartScreen(
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
         }
-    } else {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp),
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            topBar = {
-                androidx.compose.material.TopAppBar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
-                    backgroundColor = Color.Transparent,
-                    elevation = 0.dp,
+    }
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        topBar = {
+            androidx.compose.material.TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
+                backgroundColor = Color.Transparent,
+                elevation = 0.dp,
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        IconButton(
-                            onClick = {
-                                onPopBackStack()
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBackIosNew,
-                                contentDescription = "Back"
-                            )
+                    IconButton(
+                        onClick = {
+                            onPopBackStack()
                         }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "Back"
+                        )
+                    }
 
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Box() {
-                                Text(
-                                    text = "1",
-                                    color = Color.White,
-                                    fontSize = 8.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier
-                                        .background(
-                                            MaterialTheme.colorScheme.error,
-                                            shape = CircleShape
-                                        )
-                                        .badgeLayout()
-                                        .padding(end = 0.dp)
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.ShoppingCart,
-                                    contentDescription = "Shopping cart"
-                                )
-                            }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Box() {
+                            Text(
+                                text = "1",
+                                color = Color.White,
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .background(
+                                        MaterialTheme.colorScheme.error,
+                                        shape = CircleShape
+                                    )
+                                    .badgeLayout()
+                                    .padding(end = 0.dp)
+                            )
+                            Icon(
+                                imageVector = Icons.Default.ShoppingCart,
+                                contentDescription = "Shopping cart"
+                            )
                         }
                     }
                 }
-            },
-            bottomBar = {
-                BottomAppBar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    containerColor = MaterialTheme.colorScheme.surface
+            }
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                containerColor = MaterialTheme.colorScheme.surface
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(
+                            checked = checked,
+                            onCheckedChange = { checked = it })
+                        Text(
+                            text = "All items",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.DarkGray,
+                        )
+                    }
                     Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(
-                                checked = checked,
-                                onCheckedChange = { checked = it })
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.Top
+                        ) {
                             Text(
-                                text = "All items",
-                                fontSize = 12.sp,
+                                text = "Total payment: ",
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Normal,
-                                color = Color.DarkGray,
+                                color = Color.Black
+                            )
+                            Text(
+                                text = "$${totalPayment(state)}",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Red
                             )
                         }
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            horizontalArrangement = Arrangement.End
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(
+                            onClick = { /*TODO*/ },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                            shape = RoundedCornerShape(0.dp),
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(120.dp)
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.Top
+                                modifier = Modifier.fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "Total payment: ",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    color = Color.Black
+                                    text = "Checkout",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White
                                 )
-                                Text(
-                                    text = "$${totalPayment(state)}",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Red
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(
-                                onClick = { /*TODO*/ },
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                shape = RoundedCornerShape(0.dp),
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .width(120.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = "Checkout",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Color.White
-                                    )
-                                }
                             }
                         }
                     }
                 }
             }
+        }
+    ) {
+        LazyVerticalStaggeredGrid(
+            modifier = Modifier.padding(
+                top = it.calculateTopPadding(),
+                bottom = it.calculateBottomPadding()
+            ),
+            columns = StaggeredGridCells.Fixed(1),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalItemSpacing = 10.dp
         ) {
-            LazyVerticalStaggeredGrid(
-                modifier = Modifier.padding(
-                    top = it.calculateTopPadding(),
-                    bottom = it.calculateBottomPadding()
-                ),
-                columns = StaggeredGridCells.Fixed(1),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalItemSpacing = 10.dp
-            ) {
-                Log.d("CartScreen", "CartScreen: $state")
-                state.cart?.products?.let { it1 ->
-                    items(it1.count()) {index ->
-                        ProductCart(productCart = it1[index], modifier = Modifier.fillMaxSize().height(100.dp))
-                    }
+            Log.d("CartScreen", "CartScreen: $state")
+            state.cart?.products?.let { it1 ->
+                items(it1.count()) { index ->
+                    ProductCart(
+                        onPopBackStack = onPopBackStack,
+                        onEvent = viewModel::onEvent,
+                        productCart = it1[index],
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .height(100.dp)
+                    )
                 }
             }
         }
