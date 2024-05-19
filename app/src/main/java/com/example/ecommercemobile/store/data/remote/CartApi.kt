@@ -4,6 +4,7 @@ import com.example.ecommercemobile.store.domain.model.MetadataCart
 import com.example.ecommercemobile.store.domain.model.Response
 import com.example.ecommercemobile.store.domain.model.core.carts.AddCart
 import com.example.ecommercemobile.store.domain.model.core.carts.DeleteCart
+import com.example.ecommercemobile.store.domain.model.core.carts.UpdateCart
 import retrofit2.http.*
 
 /**
@@ -40,10 +41,10 @@ interface CartApi {
      * @param addCart The product whose quantity is to be updated.
      * @return Response containing MetadataCart
      */
-    @POST("carts/update-quantity-product")
+    @PATCH("carts/update-quantity-product")
     suspend fun updateQuantityProduct(
         @HeaderMap headers: Map<String, String>,
-        @Body addCart: AddCart
+        @Body updateCart: UpdateCart
     ): Response<MetadataCart>
 
     /**

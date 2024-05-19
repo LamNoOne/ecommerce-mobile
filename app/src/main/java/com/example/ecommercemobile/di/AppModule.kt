@@ -13,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -21,9 +22,16 @@ object AppModule {
 
     private val annotationInterceptor = AnnotationInterceptor()
 
-    private val client = OkHttpClient().newBuilder().apply {
-        addInterceptor(annotationInterceptor)
-    }.build()
+    private val client = OkHttpClient()
+        .newBuilder()
+        .apply {
+            addInterceptor(annotationInterceptor)
+        }
+        .connectTimeout(2, TimeUnit.MINUTES)
+        .readTimeout(2, TimeUnit.MINUTES)
+        .writeTimeout(2, TimeUnit.MINUTES)
+        .retryOnConnectionFailure(false)
+        .build()
 
     @Provides
     @Singleton

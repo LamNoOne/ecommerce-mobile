@@ -6,6 +6,7 @@ import com.example.ecommercemobile.store.domain.model.MetadataCart
 import com.example.ecommercemobile.store.domain.model.Response
 import com.example.ecommercemobile.store.domain.model.core.carts.AddCart
 import com.example.ecommercemobile.store.domain.model.core.carts.DeleteCart
+import com.example.ecommercemobile.store.domain.model.core.carts.UpdateCart
 
 interface CartRepository {
 
@@ -18,7 +19,7 @@ interface CartRepository {
 
     suspend fun updateQuantityProduct(
         headers: Map<String, String>,
-        addCart: AddCart
+        updateCart: UpdateCart
     ): Either<NetworkError, Response<MetadataCart>>
 
     suspend fun deleteProductFromCart(

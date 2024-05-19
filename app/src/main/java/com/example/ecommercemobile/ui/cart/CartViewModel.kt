@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommercemobile.store.domain.model.core.auth.Auth
+import com.example.ecommercemobile.store.domain.model.core.carts.UpdateCart
 import com.example.ecommercemobile.store.domain.repository.AuthRepository
 import com.example.ecommercemobile.store.domain.repository.CartRepository
 import com.example.ecommercemobile.ui.utils.UIEvent
@@ -92,6 +93,28 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    private fun updateProductCartQuantity(updateCart: UpdateCart) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(isLoading = true)
+            }
+            cartRepository.updateQuantityProduct(getHeaderMap(), updateCart)
+                .onRight { cart ->
+                    _state.update { currentState ->
+                        currentState.copy(cart = cart.metadata.cart)
+                    }
+                }
+                .onLeft { err ->
+                    _state.update {
+                        it.copy(error = err.error.message)
+                    }
+                }
+            _state.update {
+                it.copy(isLoading = false)
+            }
+        }
+    }
+
     fun onEvent(event: CartEvent) {
         when(event) {
             is CartEvent.OnCartProductClick -> {
@@ -101,7 +124,7 @@ class CartViewModel @Inject constructor(
                 deleteProductFromCart(event.productId)
             }
             is CartEvent.OnChangeProductQuantity -> {
-                /* TODO ("Not yet implement") */
+                updateProductCartQuantity(UpdateCart(event.productId, event.quantity))
             }
         }
     }

@@ -91,9 +91,11 @@ fun ProductCart(
                     value = valueCounter.toString(),
                     onValueIncreaseClick = {
                         valueCounter = minOf(valueCounter + 1, 99)
+                        onEvent(CartEvent.OnChangeProductQuantity(productCart.product.id, valueCounter))
                     },
                     onValueDecreaseClick = {
                         valueCounter = maxOf(valueCounter - 1, 0)
+                        onEvent(CartEvent.OnChangeProductQuantity(productCart.product.id, valueCounter))
                     },
                     onValueClearClick = {
                         valueCounter = 0

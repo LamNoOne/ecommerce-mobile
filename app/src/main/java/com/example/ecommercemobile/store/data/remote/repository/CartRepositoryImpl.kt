@@ -8,6 +8,7 @@ import com.example.ecommercemobile.store.domain.model.MetadataCart
 import com.example.ecommercemobile.store.domain.model.Response
 import com.example.ecommercemobile.store.domain.model.core.carts.AddCart
 import com.example.ecommercemobile.store.domain.model.core.carts.DeleteCart
+import com.example.ecommercemobile.store.domain.model.core.carts.UpdateCart
 import com.example.ecommercemobile.store.domain.repository.CartRepository
 import javax.inject.Inject
 
@@ -31,10 +32,10 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun updateQuantityProduct(
         headers: Map<String, String>,
-        addCart: AddCart
+        updateCart: UpdateCart
     ): Either<NetworkError, Response<MetadataCart>> {
         return Either.catch {
-            cartApi.updateQuantityProduct(headers, addCart)
+            cartApi.updateQuantityProduct(headers, updateCart)
         }.mapLeft { it.toNetworkError() }
     }
 
