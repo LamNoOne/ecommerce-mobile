@@ -82,6 +82,7 @@ class AuthViewModel @Inject constructor(
                             image,
                             phoneNumber,
                             email,
+                            address
                         ) = response.metadata.user
                         Auth(
                             userId = userId,
@@ -91,6 +92,7 @@ class AuthViewModel @Inject constructor(
                             image = image,
                             phoneNumber = phoneNumber,
                             email = email,
+                            address = address,
                             accessToken = it1,
                             refreshToken = it2,
                             id = Constants.TOKEN_UID

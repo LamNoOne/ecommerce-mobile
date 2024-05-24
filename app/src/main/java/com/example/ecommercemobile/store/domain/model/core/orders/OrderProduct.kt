@@ -1,9 +1,9 @@
-package com.example.ecommercemobile.store.domain.model.core.carts
+package com.example.ecommercemobile.store.domain.model.core.orders
 
 import com.example.ecommercemobile.store.domain.model.core.products.Product
 
-data class ProductCart(
+data class OrderProduct(
     val quantity: Int,
     val product: Product,
-    val checked: Boolean = false
+    val totalAmount: Int
 )

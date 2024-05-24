@@ -17,9 +17,12 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/App.Starting.Theme">
+<!--            android:launchMode="singleTop"-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+<!--                <data android:scheme="http://seshop.android.app" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

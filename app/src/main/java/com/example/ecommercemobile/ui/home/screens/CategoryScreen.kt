@@ -50,13 +50,15 @@ fun CategoryScreen(
                     .fillMaxSize()
             ) {
                 items(state.categories) { category ->
-                    CategoryItem(
-                        modifier = Modifier
-                            .height(80.dp)
-                            .width(100.dp),
-                        category = category,
-                        onEvent = viewModel::onEvent
-                    )
+                    if (category.id != 8) {
+                        CategoryItem(
+                            modifier = Modifier
+                                .height(80.dp)
+                                .width(100.dp),
+                            category = category,
+                            onEvent = viewModel::onEvent
+                        )
+                    }
                 }
             }
         }

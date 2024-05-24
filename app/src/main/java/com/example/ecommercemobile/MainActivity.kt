@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ecommercemobile.ui.auth.AuthScreen
 import com.example.ecommercemobile.ui.cart.CartScreen
+import com.example.ecommercemobile.ui.checkout.CheckoutScreen
 import com.example.ecommercemobile.ui.favorite.FavoriteScreen
 import com.example.ecommercemobile.ui.home.screens.HomeScreen
 import com.example.ecommercemobile.ui.product_detail.ProductDetailScreen
@@ -113,6 +114,21 @@ class MainActivity : ComponentActivity() {
                                 onNavigate = {
                                     navController.navigate(it.route)
                                 })
+                        }
+                        composable(
+                            route = "${Routes.CHECKOUT}?productIds={productIds}",
+                            arguments = listOf(
+                                navArgument("productIds") {
+                                    type = NavType.StringType
+                                }
+                            )
+                        ) {
+                            CheckoutScreen(
+                                onPopBackStack = { navController.popBackStack() },
+                                onNavigate = {
+                                    navController.navigate(it.route)
+                                }
+                            )
                         }
                         composable(Routes.FAVORITE) {
                             FavoriteScreen()

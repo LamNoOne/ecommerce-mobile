@@ -4,6 +4,7 @@ import com.example.ecommercemobile.store.domain.model.MetadataCart
 import com.example.ecommercemobile.store.domain.model.Response
 import com.example.ecommercemobile.store.domain.model.core.carts.AddCart
 import com.example.ecommercemobile.store.domain.model.core.carts.DeleteCart
+import com.example.ecommercemobile.store.domain.model.core.carts.GetSelectedProduct
 import com.example.ecommercemobile.store.domain.model.core.carts.UpdateCart
 import retrofit2.http.*
 
@@ -20,7 +21,13 @@ interface CartApi {
      */
     @GET("carts/get-my-cart")
     suspend fun getCart(
-        @HeaderMap headers: Map<String, String>
+        @HeaderMap headers: Map<String, String>,
+    ): Response<MetadataCart>
+
+    @POST("carts/get-selected-products")
+    suspend fun getSelectedProducts(
+        @HeaderMap headers: Map<String, String>,
+        @Body selectedProducts: GetSelectedProduct
     ): Response<MetadataCart>
 
     /**

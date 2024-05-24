@@ -1,4 +1,4 @@
-package com.example.ecommercemobile.ui.product_detail
+package com.example.ecommercemobile.ui.checkout
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -8,13 +8,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommercemobile.store.domain.model.core.auth.Auth
-import com.example.ecommercemobile.store.domain.model.core.carts.AddCart
+import com.example.ecommercemobile.store.domain.model.core.carts.GetSelectedProduct
 import com.example.ecommercemobile.store.domain.repository.AuthRepository
 import com.example.ecommercemobile.store.domain.repository.CartRepository
-import com.example.ecommercemobile.store.domain.repository.ProductsRepository
+import com.example.ecommercemobile.store.domain.repository.CheckoutRepository
 import com.example.ecommercemobile.ui.utils.UIEvent
-import com.example.ecommercemobile.utils.Event
-import com.example.ecommercemobile.utils.EventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,14 +24,14 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductDetailViewModel @Inject constructor(
-    private val productsRepository: ProductsRepository,
+class CheckoutViewModel @Inject constructor(
     private val cartRepository: CartRepository,
     private val authRepository: AuthRepository,
+    private val checkoutRepository: CheckoutRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     // set mutable state
-    private var _state = MutableStateFlow(ProductDetailViewState())
+    private var _state = MutableStateFlow(CheckoutViewState())
 
     // get immutable one
     val state = _state.asStateFlow()
@@ -47,58 +45,37 @@ class ProductDetailViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
-        val productId = savedStateHandle.get<Int>("productId")
-        productId?.let {
-            getProductById(it)
-        }
-
         runBlocking {
             authRepository.getAuth(1)?.let {
                 auth = it
             }
         }
 
-        Log.d("ProductDetailViewModel", "init: $auth")
+        val setOfProductId = savedStateHandle.get<String>("productIds")
+        setOfProductId?.let { it ->
+            val listOfProductIds = it.split(",").map { it.toInt() }
+            val selectedProducts = GetSelectedProduct(listOfProductIds)
+            getProduct(selectedProducts)
+        }
     }
 
-    private fun getProductById(id: Int) {
+    private fun getProduct(selectedProducts: GetSelectedProduct) {
         viewModelScope.launch {
-            _state.update {
-                it.copy(isLoading = true)
-            }
-            productsRepository.getProductById(id)
-                .onRight { productResponse ->
-                    _state.update {
-                        it.copy(product = productResponse.metadata.product)
+            _state.update { it.copy(isLoading = true) }
+            cartRepository.getSelectedProducts(getHeaderMap(), selectedProducts)
+                .onRight { cart ->
+                    Log.d("CheckoutViewModel", "getCart: $cart")
+                    _state.update { currentState ->
+                        currentState.copy(cart = cart.metadata.cart)
                     }
                 }
                 .onLeft { err ->
+                    Log.d("CheckoutViewModel", "getCart error: $err")
                     _state.update {
                         it.copy(error = err.error.message)
                     }
                 }
-            _state.update {
-                it.copy(isLoading = false)
-            }
-        }
-    }
-
-    fun onEvent(event: ProductDetailEvent) {
-        when (event) {
-            is ProductDetailEvent.OnAddToCartClick -> {
-                viewModelScope.launch {
-                    cartRepository.addToCart(
-                        getHeaderMap(),
-                        AddCart(event.productId, event.quantity)
-                    )
-                        .onRight {
-                            EventBus.sendEvent(Event.Toast("Add to cart successfully!"))
-                        }
-                        .onLeft { err ->
-                            EventBus.sendEvent(Event.Toast(err.error.message))
-                        }
-                }
-            }
+            _state.update { it.copy(isLoading = false) }
         }
     }
 
@@ -107,11 +84,5 @@ class ProductDetailViewModel @Inject constructor(
         headerMap["Authorization"] = "Bearer ${auth?.accessToken}"
         headerMap["x-user-id"] = auth?.userId.toString()
         return headerMap
-    }
-
-    private fun sendUIEvent(event: UIEvent) {
-        viewModelScope.launch {
-            _uiEvent.send(event)
-        }
     }
 }

@@ -13,6 +13,7 @@ data class Auth(
     val image: String?,
     val phoneNumber: String?,
     val email: String,
+    val address: String,
     val accessToken: String,
     val refreshToken: String,
     @PrimaryKey val id: Int = Constants.TOKEN_UID

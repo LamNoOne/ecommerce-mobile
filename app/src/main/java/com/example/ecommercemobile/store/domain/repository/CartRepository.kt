@@ -6,11 +6,19 @@ import com.example.ecommercemobile.store.domain.model.MetadataCart
 import com.example.ecommercemobile.store.domain.model.Response
 import com.example.ecommercemobile.store.domain.model.core.carts.AddCart
 import com.example.ecommercemobile.store.domain.model.core.carts.DeleteCart
+import com.example.ecommercemobile.store.domain.model.core.carts.GetSelectedProduct
 import com.example.ecommercemobile.store.domain.model.core.carts.UpdateCart
 
 interface CartRepository {
 
-    suspend fun getCart(headers: Map<String, String>): Either<NetworkError, Response<MetadataCart>>
+    suspend fun getCart(
+        headers: Map<String, String>
+    ): Either<NetworkError, Response<MetadataCart>>
+
+    suspend fun getSelectedProducts(
+        headers: Map<String, String>,
+        selectedProducts: GetSelectedProduct
+    ): Either<NetworkError, Response<MetadataCart>>
 
     suspend fun addToCart(
         headers: Map<String, String>,

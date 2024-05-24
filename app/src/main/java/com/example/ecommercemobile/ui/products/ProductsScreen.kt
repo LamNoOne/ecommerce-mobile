@@ -14,9 +14,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.ecommercemobile.store.domain.model.core.products.Product
+import com.example.ecommercemobile.ui.components.ErrorItem
+import com.example.ecommercemobile.ui.components.LoadingItem
 import com.example.ecommercemobile.ui.events.ProductListEvent
 import com.example.ecommercemobile.ui.home.components.ProductCard
 import com.example.ecommercemobile.ui.utils.UIEvent
@@ -65,6 +68,19 @@ fun ProductsScreen(
                     },
                 product = productsData[index]!!
             )
+        }
+        when (productsData.loadState.append) {
+            is LoadState.NotLoading -> Unit
+            LoadState.Loading -> {
+                item {
+                    LoadingItem()
+                }
+            }
+            is LoadState.Error -> {
+                item {
+                    ErrorItem(message = (productsData.loadState.append as LoadState.Error).error.message.toString())
+                }
+            }
         }
     }
 }

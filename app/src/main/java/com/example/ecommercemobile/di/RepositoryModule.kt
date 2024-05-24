@@ -1,13 +1,7 @@
 package com.example.ecommercemobile.di
 
-import com.example.ecommercemobile.store.data.remote.repository.AuthRepositoryImpl
-import com.example.ecommercemobile.store.data.remote.repository.CartRepositoryImpl
-import com.example.ecommercemobile.store.data.remote.repository.CategoriesRepositoryImpl
-import com.example.ecommercemobile.store.data.remote.repository.ProductsRepositoryImpl
-import com.example.ecommercemobile.store.domain.repository.AuthRepository
-import com.example.ecommercemobile.store.domain.repository.CartRepository
-import com.example.ecommercemobile.store.domain.repository.CategoriesRepository
-import com.example.ecommercemobile.store.domain.repository.ProductsRepository
+import com.example.ecommercemobile.store.data.remote.repository.*
+import com.example.ecommercemobile.store.domain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -32,4 +26,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCheckoutRepository(impl: CheckoutRepositoryImpl): CheckoutRepository
 }

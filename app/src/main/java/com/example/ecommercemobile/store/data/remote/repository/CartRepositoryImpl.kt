@@ -8,6 +8,7 @@ import com.example.ecommercemobile.store.domain.model.MetadataCart
 import com.example.ecommercemobile.store.domain.model.Response
 import com.example.ecommercemobile.store.domain.model.core.carts.AddCart
 import com.example.ecommercemobile.store.domain.model.core.carts.DeleteCart
+import com.example.ecommercemobile.store.domain.model.core.carts.GetSelectedProduct
 import com.example.ecommercemobile.store.domain.model.core.carts.UpdateCart
 import com.example.ecommercemobile.store.domain.repository.CartRepository
 import javax.inject.Inject
@@ -15,10 +16,23 @@ import javax.inject.Inject
 class CartRepositoryImpl @Inject constructor(
     private val cartApi: CartApi
 ) : CartRepository {
-    override suspend fun getCart(headers: Map<String, String>): Either<NetworkError, Response<MetadataCart>> {
+    override suspend fun getCart(
+        headers: Map<String, String>
+    ): Either<NetworkError, Response<MetadataCart>> {
         return Either.catch {
             cartApi.getCart(headers)
         }.mapLeft { it.toNetworkError() }
+    }
+
+    override suspend fun getSelectedProducts(
+        headers: Map<String, String>,
+        selectedProducts: GetSelectedProduct
+    ): Either<NetworkError, Response<MetadataCart>> {
+        return Either.catch {
+            cartApi.getSelectedProducts(headers, selectedProducts)
+        }.mapLeft {
+            it.toNetworkError()
+        }
     }
 
     override suspend fun addToCart(

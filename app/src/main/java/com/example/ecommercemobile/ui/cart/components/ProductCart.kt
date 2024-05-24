@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -26,9 +27,13 @@ fun ProductCart(
     modifier: Modifier = Modifier,
     onPopBackStack: () -> Unit,
     onEvent: (CartEvent) -> Unit,
+    itemChecked: Boolean,
+    updateAllChecked: (Boolean) -> Unit,
+    updateItemChecked: (Boolean) -> Unit,
+    updateSelectedItem: (ProductCart) -> Unit,
+    deleteSelectedItem: (ProductCart) -> Unit,
     productCart: ProductCart
 ) {
-    var checked by remember { mutableStateOf(false) }
 
     var valueCounter by remember {
         mutableStateOf(productCart.quantity)
@@ -41,29 +46,37 @@ fun ProductCart(
     ConfirmDialog(
         onPopBackStack = onPopBackStack,
         onEvent = onEvent,
-        changeQuantity = { updateValueCounter(it) },
+        changeQuantity = {
+            updateValueCounter(it)
+        },
         productId = productCart.product.id,
         quantity = valueCounter
     )
 
-
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(140.dp)
             .background(Color.White)
             .clip(RoundedCornerShape(16.dp))
             .padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        Checkbox(checked = checked, onCheckedChange = { checked = it })
+        Checkbox(checked = itemChecked, onCheckedChange = {
+            updateItemChecked(it)
+            if (it) {
+                updateSelectedItem(productCart)
+            } else {
+                updateAllChecked(false)
+                deleteSelectedItem(productCart)
+            }
+        })
         AsyncImage(
             model = productCart.product.imageUrl,
             contentDescription = null,
             modifier = Modifier
-                .height(200.dp)
+                .height(240.dp)
                 .padding(6.dp)
                 .aspectRatio(1f),
             contentScale = ContentScale.FillBounds
@@ -81,21 +94,47 @@ fun ProductCart(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Bottom
             ) {
-                Text(
-                    text = productCart.product.price.toString(),
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text = "$${productCart.product.price}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Red,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = "$${productCart.product.price + 50}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Normal,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                }
                 CounterButton(
                     value = valueCounter.toString(),
                     onValueIncreaseClick = {
                         valueCounter = minOf(valueCounter + 1, 99)
-                        onEvent(CartEvent.OnChangeProductQuantity(productCart.product.id, valueCounter))
+                        onEvent(
+                            CartEvent.OnChangeProductQuantity(
+                                productCart.product.id,
+                                valueCounter
+                            )
+                        )
                     },
                     onValueDecreaseClick = {
                         valueCounter = maxOf(valueCounter - 1, 0)
-                        onEvent(CartEvent.OnChangeProductQuantity(productCart.product.id, valueCounter))
+                        onEvent(
+                            CartEvent.OnChangeProductQuantity(
+                                productCart.product.id,
+                                valueCounter
+                            )
+                        )
                     },
                     onValueClearClick = {
                         valueCounter = 0

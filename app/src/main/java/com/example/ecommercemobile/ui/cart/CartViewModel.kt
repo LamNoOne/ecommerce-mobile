@@ -6,11 +6,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.example.ecommercemobile.store.domain.model.ProductParams
 import com.example.ecommercemobile.store.domain.model.core.auth.Auth
 import com.example.ecommercemobile.store.domain.model.core.carts.UpdateCart
 import com.example.ecommercemobile.store.domain.repository.AuthRepository
 import com.example.ecommercemobile.store.domain.repository.CartRepository
+import com.example.ecommercemobile.store.domain.repository.ProductsRepository
+import com.example.ecommercemobile.ui.products.ProductsDataSource
 import com.example.ecommercemobile.ui.utils.UIEvent
+import com.example.ecommercemobile.ui.utils.sendEvent
+import com.example.ecommercemobile.utils.Event
 import com.example.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -25,7 +33,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
-    private val authRepository: AuthRepository
+    private val productsRepository: ProductsRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     // set mutable state of cart
     private var _state = MutableStateFlow(CartViewState())
@@ -47,6 +56,18 @@ class CartViewModel @Inject constructor(
         Log.d("CartViewModel", "init: $auth")
         getCart()
     }
+
+    private val productParams = ProductParams(
+        name = "",
+        categoryId = 0,
+        limit = 20,
+        sortBy = "",
+        order = ""
+    )
+
+    val productPager = Pager(PagingConfig(pageSize = 20)) {
+        ProductsDataSource(productsRepository, productParams)
+    }.flow.cachedIn(viewModelScope)
 
     private fun getCart() {
         viewModelScope.launch {
@@ -125,6 +146,19 @@ class CartViewModel @Inject constructor(
             }
             is CartEvent.OnChangeProductQuantity -> {
                 updateProductCartQuantity(UpdateCart(event.productId, event.quantity))
+            }
+            is CartEvent.OnProductClick -> {
+                sendUIEvent(UIEvent.Navigate("${Routes.PRODUCT_DETAIL}?productId=${event.productId}"))
+            }
+            is CartEvent.OnCheckoutClick -> {
+                var productIds = ""
+                event.productCheckout.forEach {
+                    productIds += "${it.product.id},"
+                }
+                sendUIEvent(UIEvent.Navigate("${Routes.CHECKOUT}?productIds=${productIds.dropLast(1)}"))
+            }
+            is CartEvent.OnShowSnackBar -> {
+                sendEvent(Event.Toast(event.message))
             }
         }
     }

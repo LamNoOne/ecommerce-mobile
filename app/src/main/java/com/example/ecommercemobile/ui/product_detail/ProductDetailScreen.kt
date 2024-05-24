@@ -59,7 +59,7 @@ fun ProductDetailScreen(
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     var valueCounter by remember {
-        mutableStateOf(0)
+        mutableStateOf(1)
     }
 
     LaunchedEffect(key1 = true) {
@@ -428,7 +428,7 @@ fun ProductDetailScreen(
                                     valueCounter = minOf(valueCounter + 1, 99)
                                 },
                                 onValueDecreaseClick = {
-                                    valueCounter = maxOf(valueCounter - 1, 0)
+                                    valueCounter = maxOf(valueCounter - 1, 1)
                                 },
                                 onValueClearClick = {
                                     valueCounter = 0

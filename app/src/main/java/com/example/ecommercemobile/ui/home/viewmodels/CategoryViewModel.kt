@@ -6,8 +6,6 @@ import com.example.ecommercemobile.store.domain.repository.CategoriesRepository
 import com.example.ecommercemobile.ui.home.events.CategoryEvent
 import com.example.ecommercemobile.ui.home.viewstates.CategoryViewState
 import com.example.ecommercemobile.ui.utils.UIEvent
-import com.example.ecommercemobile.ui.utils.sendEvent
-import com.example.ecommercemobile.utils.Event
 import com.example.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -50,7 +48,6 @@ class CategoryViewModel @Inject constructor(
                     _state.update {
                         it.copy(error = err.error.message)
                     }
-                    sendEvent(Event.Toast(err.error.message))
                 }
             _state.update {
                 it.copy(isLoading = false)

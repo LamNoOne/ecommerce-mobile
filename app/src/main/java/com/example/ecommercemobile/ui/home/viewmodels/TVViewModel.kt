@@ -6,8 +6,6 @@ import com.example.ecommercemobile.store.domain.repository.ProductsRepository
 import com.example.ecommercemobile.ui.events.ProductListEvent
 import com.example.ecommercemobile.ui.home.viewstates.ProductCategoryViewState
 import com.example.ecommercemobile.ui.utils.UIEvent
-import com.example.ecommercemobile.utils.Event
-import com.example.ecommercemobile.utils.EventBus.sendEvent
 import com.example.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -55,7 +53,6 @@ class TVViewModel @Inject constructor(
                     _state.update {
                         it.copy(error = err.error.message)
                     }
-                    sendEvent(Event.Toast(err.error.message))
                 }
             _state.update {
                 it.copy(isLoading = false)

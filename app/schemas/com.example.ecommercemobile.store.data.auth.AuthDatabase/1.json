@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f173814e75e3a7d12a83c3ceb5f5267e",
+    "identityHash": "3732a72896de35b1e300dfe2729fd2cd",
     "entities": [
       {
         "tableName": "Auth",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `lastName` TEXT NOT NULL, `firstName` TEXT NOT NULL, `username` TEXT, `image` TEXT, `phoneNumber` TEXT, `email` TEXT NOT NULL, `accessToken` TEXT NOT NULL, `refreshToken` TEXT NOT NULL, `id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` INTEGER NOT NULL, `lastName` TEXT NOT NULL, `firstName` TEXT NOT NULL, `username` TEXT, `image` TEXT, `phoneNumber` TEXT, `email` TEXT NOT NULL, `address` TEXT NOT NULL, `accessToken` TEXT NOT NULL, `refreshToken` TEXT NOT NULL, `id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "userId",
@@ -51,6 +51,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "accessToken",
             "columnName": "accessToken",
             "affinity": "TEXT",
@@ -82,7 +88,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f173814e75e3a7d12a83c3ceb5f5267e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3732a72896de35b1e300dfe2729fd2cd')"
     ]
   }
 }
