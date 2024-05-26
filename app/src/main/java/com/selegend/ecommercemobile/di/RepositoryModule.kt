@@ -30,4 +30,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCheckoutRepository(impl: CheckoutRepositoryImpl): CheckoutRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTransactionRepository(impl: TransactionRepositoryImpl): TransactionRepository
 }

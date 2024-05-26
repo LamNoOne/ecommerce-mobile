@@ -15,6 +15,7 @@ import com.selegend.ecommercemobile.store.domain.repository.CheckoutRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import com.selegend.ecommercemobile.utils.Event
 import com.selegend.ecommercemobile.utils.EventBus
+import com.selegend.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +40,7 @@ class CheckoutViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     private var auth by mutableStateOf<Auth?>(null)
+    val authState get() = auth
 
     /**
      * Channel for UI events.
@@ -95,8 +97,7 @@ class CheckoutViewModel @Inject constructor(
                             EventBus.sendEvent(Event.Toast("Order created successfully"))
                             Log.d("CheckoutViewModel", "onEvent: ${checkoutResponse.metadata.order}")
                             val orderId = checkoutResponse.metadata.order.orderId
-
-                            // navigate to payment screen
+                            sendUIEvent(UIEvent.Navigate("${Routes.PAYMENT}?orderId=${orderId}"))
                         }
                         .onLeft { err ->
                             EventBus.sendEvent(Event.Toast(err.error.message))
@@ -111,5 +112,11 @@ class CheckoutViewModel @Inject constructor(
         headerMap["Authorization"] = "Bearer ${auth?.accessToken}"
         headerMap["x-user-id"] = auth?.userId.toString()
         return headerMap
+    }
+
+    private fun sendUIEvent(event: UIEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
+        }
     }
 }

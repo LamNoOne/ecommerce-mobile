@@ -10,10 +10,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material.icons.filled.Payment
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,11 +32,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.selegend.ecommercemobile.store.domain.model.core.carts.ProductCart
+import com.selegend.ecommercemobile.store.domain.model.core.checkout.CheckoutFromCart
+import com.selegend.ecommercemobile.store.domain.model.core.payment.ProductPayment
 import com.selegend.ecommercemobile.ui.checkout.components.CheckoutProduct
 import com.selegend.ecommercemobile.ui.components.LoadingItem
 import com.selegend.ecommercemobile.ui.utils.UIEvent
-import com.selegend.ecommercemobile.utils.Routes
+import kotlinx.coroutines.launch
 
 @Composable
 fun CheckoutScreen(
@@ -44,18 +47,38 @@ fun CheckoutScreen(
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.ShowSnackBar -> {
+                    scope.launch {
+                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                        scaffoldState.snackbarHostState.showSnackbar(
+                            message = event.message,
+                            actionLabel = event.action,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+                is UIEvent.Navigate -> onNavigate(event)
+                else -> Unit
+            }
+        }
+    }
     Log.d("CheckoutScreen", "state: $state")
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var showDialog by remember { mutableStateOf(false) }
     var address by remember {
-        mutableStateOf<String>("")
+        mutableStateOf<String>(viewModel.authState?.address ?: "")
     }
 
-    val total = state.cart?.products?.sumOf<ProductCart> { it.product.price * it.quantity } ?: 0
+    val total = state.cart?.products?.sumOf<ProductPayment> { it.product.price * it.quantity } ?: 0
 
     var phoneNumber by remember {
-        mutableStateOf<String>("")
+        mutableStateOf<String>(viewModel.authState?.phoneNumber ?: "")
     }
 
     fun showDialogHandler(showDialogStatus: Boolean) {
@@ -72,45 +95,47 @@ fun CheckoutScreen(
         showDialogHandler = { showDialogHandler(it) },
         removeHandler = { removeAddress() })
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        topBar = {
-            androidx.compose.material.TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp),
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Start
+    if (state.isLoading) {
+        LoadingItem()
+    } else {
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize(),
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            topBar = {
+                androidx.compose.material.TopAppBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    backgroundColor = Color.Transparent,
+                    elevation = 0.dp,
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(
-                            onClick = {
-                                onPopBackStack()
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(
+                                onClick = {
+                                    onPopBackStack()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBackIosNew,
+                                    contentDescription = "Back"
+                                )
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBackIosNew,
-                                contentDescription = "Back"
+                            Text(
+                                text = "Payment",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.Black
                             )
                         }
-                        Text(
-                            text = "Payment",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
-                        )
                     }
                 }
-            }
-        },
-        bottomBar = {
-            if (!state.isLoading) {
+            },
+            bottomBar = {
                 BottomAppBar(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -142,17 +167,16 @@ fun CheckoutScreen(
                         ) {
                             Button(
                                 onClick = {
-//                                    viewModel.onEvent(CheckoutEvent.OnCreateOrder(
-//                                        CheckoutFromCart(
-//                                            shipAddress = address,
-//                                            phoneNumber = phoneNumber,
-//                                            paymentFormId = 1,
-//                                            orderProducts = state.cart?.products?.map { it.product.id }
-//                                                ?: emptyList()
-//                                            )
-//                                        )
-//                                    )
-                                          onNavigate(UIEvent.Navigate("${Routes.PAYMENT}?orderId=12"))
+                                    viewModel.onEvent(CheckoutEvent.OnCreateOrder(
+                                        CheckoutFromCart(
+                                            shipAddress = address,
+                                            phoneNumber = phoneNumber,
+                                            paymentFormId = 1,
+                                            orderProducts = state.cart?.products?.map { it.product.id }
+                                                ?: emptyList()
+                                            )
+                                        )
+                                    )
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                                 shape = RoundedCornerShape(0.dp),
@@ -177,11 +201,7 @@ fun CheckoutScreen(
                     }
                 }
             }
-        }
-    ) { it ->
-        if (state.isLoading) {
-            LoadingItem()
-        } else {
+        ) { it ->
             LazyVerticalStaggeredGrid(
                 modifier = Modifier.padding(
                     top = it.calculateTopPadding(),
@@ -259,7 +279,8 @@ fun CheckoutScreen(
                                         )
                                     }
                                     Text(
-                                        text = "$phoneNumber\n$address",
+                                        text = "${viewModel.authState?.lastName} ${viewModel.authState?. firstName} | $phoneNumber" +
+                                                "\n$address",
                                         fontSize = 12.sp,
                                         color = Color.DarkGray,
                                         fontWeight = FontWeight.Normal,

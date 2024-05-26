@@ -17,15 +17,16 @@ import com.google.android.gms.wallet.IsReadyToPayRequest
 import com.google.android.gms.wallet.PaymentData
 import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
+import com.google.gson.Gson
+import com.selegend.ecommercemobile.store.domain.model.GooglePayJson
 import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
+import com.selegend.ecommercemobile.store.domain.model.core.transaction.MakeTransaction
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.store.domain.repository.CheckoutRepository
-import com.selegend.ecommercemobile.ui.checkout.CheckoutEvent
+import com.selegend.ecommercemobile.store.domain.repository.TransactionRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
-import com.selegend.ecommercemobile.utils.Event
-import com.selegend.ecommercemobile.utils.EventBus
-import com.selegend.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -42,6 +43,7 @@ import kotlin.coroutines.resume
 class PaymentViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val checkoutRepository: CheckoutRepository,
+    private val transactionRepository: TransactionRepository,
     application: Application,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -50,6 +52,11 @@ class PaymentViewModel @Inject constructor(
 
     // get immutable one
     val state = _state.asStateFlow()
+
+
+    // make a transaction to server and receive a transaction id
+    private var _transactionState = MutableStateFlow(TransactionViewState())
+    val transactionState = _transactionState.asStateFlow()
 
     private var auth by mutableStateOf<Auth?>(null)
 
@@ -98,31 +105,6 @@ class PaymentViewModel @Inject constructor(
                     }
                 }
             _state.update { it.copy(isLoading = false) }
-        }
-    }
-
-    fun onEvent(event: CheckoutEvent) {
-        when (event) {
-            is CheckoutEvent.OnCreateOrder -> {
-                viewModelScope.launch {
-                    // check validation of the checkout form
-                    if (event.checkout.shipAddress.isBlank() || event.checkout.phoneNumber.isBlank() || event.checkout.orderProducts.isEmpty()) {
-                        EventBus.sendEvent(Event.Toast("Please fill in all the require information"))
-                        return@launch
-                    }
-                    checkoutRepository.checkoutFromCart(getHeaderMap(), event.checkout)
-                        .onRight {checkoutResponse ->
-                            EventBus.sendEvent(Event.Toast("Order created successfully"))
-                            Log.d("CheckoutViewModel", "onEvent: ${checkoutResponse.metadata.order}")
-                            val orderId = checkoutResponse.metadata.order.orderId
-                            sendUIEvent(UIEvent.Navigate("${Routes.PAYMENT}?orderId=$orderId}"))
-                            // navigate to payment screen
-                        }
-                        .onLeft { err ->
-                            EventBus.sendEvent(Event.Toast(err.error.message))
-                        }
-                }
-            }
         }
     }
 
@@ -194,15 +176,33 @@ class PaymentViewModel @Inject constructor(
         Log.e("Google Pay API error", "Error code: $statusCode, Message: $message")
     }
 
-    fun setPaymentData(paymentData: PaymentData) {
-        val payState = extractPaymentBillingName(paymentData)?.let {
-            PaymentUiState.PaymentCompleted(payerName = it)
+    fun setPaymentData(paymentData: PaymentData, orderId: Int) {
+        val payState = extractPaymentBillingName(paymentData, orderId)?.let {
+            PaymentUiState.PaymentCompleted(transactionId = it)
         } ?: PaymentUiState.Error(CommonStatusCodes.INTERNAL_ERROR)
 
         _paymentUiState.update { payState }
     }
 
-    private fun extractPaymentBillingName(paymentData: PaymentData): String? {
+    private suspend fun createTransaction(orderId: Int, nonce: String) {
+        transactionRepository.createTransaction(
+            getHeaderMap(),
+            MakeTransaction(orderId, nonce)
+        )
+            .onRight { transactionResponse ->
+                _transactionState.update { currentState ->
+                    currentState.copy(
+                        transactionId = transactionResponse.metadata.transaction.id,
+                        success = transactionResponse.metadata.success
+                    )
+                }
+            }
+            .onLeft { err ->
+                Log.d("Error", err.error.message)
+            }
+    }
+
+    private fun extractPaymentBillingName(paymentData: PaymentData, orderId: Int): String? {
         val paymentInformation = paymentData.toJson()
 
         try {
@@ -212,20 +212,38 @@ class PaymentViewModel @Inject constructor(
 //            val shipAddress = paymentMethodData.getJSONObject("info")
 //                .getJSONObject("billingAddress")
 //            Log.d("ShippingAddress", shipAddress.toString())
-            val billingName = paymentMethodData.getJSONObject("info")
-                .getJSONObject("billingAddress").getString("name")
-            Log.d("BillingName", billingName)
+//            val billingName = paymentMethodData.getJSONObject("info")
+//                .getJSONObject("billingAddress").getString("name")
+//            Log.d("BillingName", billingName)
+
+            Log.d("ORDERIDD:::::", orderId.toString())
+            Log.d("PaymentMethodData", paymentMethodData.toString())
 
             // Logging token string.
-            Log.d(
-                "Google Pay token", paymentMethodData
-                    .getJSONObject("tokenizationData")
-                    .getString("token")
-            )
+            val paymentJson = paymentMethodData.getJSONObject("tokenizationData").getString("token")
 
-            return billingName
+
+            val gson = Gson()
+            val response = gson.fromJson(paymentJson, GooglePayJson::class.java)
+            val nonce = response.androidPayCards[0].nonce
+//            val orderId = _state.value.order?.orderId ?: 0
+            Log.d("Nonce", nonce)
+            Log.d("OrderId", orderId.toString())
+
+            runBlocking {
+                if (orderId != null) {
+                    createTransaction(orderId, nonce)
+                }
+            }
+
+            Log.d("TransactionState", transactionState.value.toString())
+
+            if (transactionState.value.success) {
+                return transactionState.value.transactionId
+            }
+            return null
         } catch (error: JSONException) {
-            Log.e("handlePaymentSuccess", "Error: $error")
+            Log.e("Error", error.message.toString())
         }
 
         return null
@@ -236,7 +254,7 @@ class PaymentViewModel @Inject constructor(
 abstract class PaymentUiState internal constructor() {
     object NotStarted : PaymentUiState()
     object Available : PaymentUiState()
-    class PaymentCompleted(val payerName: String) : PaymentUiState()
+    class PaymentCompleted(val transactionId: String) : PaymentUiState()
     class Error(val code: Int, val message: String? = null) : PaymentUiState()
 }
 

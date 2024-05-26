@@ -24,7 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.selegend.ecommercemobile.store.domain.model.core.carts.ProductCart
+import com.selegend.ecommercemobile.store.domain.model.core.payment.ProductPayment
 import com.selegend.ecommercemobile.store.domain.model.core.products.Product
 import com.selegend.ecommercemobile.ui.cart.components.ProductCart
 import com.selegend.ecommercemobile.ui.product_detail.badgeLayout
@@ -41,7 +41,7 @@ fun CartScreen(
     var checked by remember { mutableStateOf(false) }
     var isAtLeastOneChecked by remember { mutableStateOf(false) }
     var selectedItem = remember {
-        mutableListOf<ProductCart>()
+        mutableListOf<ProductPayment>()
     }
 
     val productsData: LazyPagingItems<Product> =
@@ -50,11 +50,11 @@ fun CartScreen(
     Log.d("CartScreen", "CartScreen product state: ${productsData.itemCount}")
 
 
-    fun updateSelectedItem(item: ProductCart) {
+    fun updateSelectedItem(item: ProductPayment) {
         selectedItem.add(item)
     }
 
-    fun deleteSelectedItem(item: ProductCart) {
+    fun deleteSelectedItem(item: ProductPayment) {
         selectedItem.remove(item)
     }
 
@@ -277,7 +277,6 @@ fun CartScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalItemSpacing = 10.dp
         ) {
-            Log.d("CartScreen", "CartScreen: $state")
             state.cart?.products?.let { it1 ->
                 items(it1.count()) { index ->
                     var itemChecked by remember {

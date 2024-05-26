@@ -14,10 +14,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.selegend.ecommercemobile.store.domain.model.core.carts.ProductCart
+import com.selegend.ecommercemobile.store.domain.model.core.payment.ProductPayment
 
 @Composable
-fun CheckoutProduct(checkoutProduct: ProductCart) {
+fun CheckoutProduct(checkoutProduct: ProductPayment) {
     HorizontalDivider(
         thickness = 8.dp,
         color = MaterialTheme.colorScheme.surfaceContainer

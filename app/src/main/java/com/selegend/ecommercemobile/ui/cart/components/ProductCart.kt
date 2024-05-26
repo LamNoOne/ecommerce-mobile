@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.selegend.ecommercemobile.store.domain.model.core.carts.ProductCart
+import com.selegend.ecommercemobile.store.domain.model.core.payment.ProductPayment
 import com.selegend.ecommercemobile.ui.cart.CartEvent
 import com.selegend.ecommercemobile.ui.components.CounterButton
 
@@ -30,9 +30,9 @@ fun ProductCart(
     itemChecked: Boolean,
     updateAllChecked: (Boolean) -> Unit,
     updateItemChecked: (Boolean) -> Unit,
-    updateSelectedItem: (ProductCart) -> Unit,
-    deleteSelectedItem: (ProductCart) -> Unit,
-    productCart: ProductCart
+    updateSelectedItem: (ProductPayment) -> Unit,
+    deleteSelectedItem: (ProductPayment) -> Unit,
+    productCart: ProductPayment
 ) {
 
     var valueCounter by remember {

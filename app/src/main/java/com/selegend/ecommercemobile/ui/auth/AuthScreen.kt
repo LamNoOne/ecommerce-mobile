@@ -32,7 +32,7 @@ fun AuthScreen(
                 is UIEvent.ShowSnackBar -> {
                     scope.launch {
                         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-                        val result = scaffoldState.snackbarHostState.showSnackbar(
+                        scaffoldState.snackbarHostState.showSnackbar(
                             message = event.message,
                             actionLabel = event.action,
                             duration = SnackbarDuration.Short

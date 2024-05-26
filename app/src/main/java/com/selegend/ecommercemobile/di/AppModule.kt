@@ -60,6 +60,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideTransactionApi(): TransactionApi {
+        return retrofit.create(TransactionApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthApi(): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }

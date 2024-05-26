@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -27,6 +29,7 @@ import com.selegend.ecommercemobile.ui.checkout.CheckoutScreen
 import com.selegend.ecommercemobile.ui.favorite.FavoriteScreen
 import com.selegend.ecommercemobile.ui.home.screens.HomeScreen
 import com.selegend.ecommercemobile.ui.payment.PaymentScreen
+import com.selegend.ecommercemobile.ui.payment.PaymentUiState
 import com.selegend.ecommercemobile.ui.payment.PaymentViewModel
 import com.selegend.ecommercemobile.ui.product_detail.ProductDetailScreen
 import com.selegend.ecommercemobile.ui.products.ProductsScreen
@@ -40,13 +43,20 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    var orderId: Int = 0
+
+    @JvmName("setOrderId1")
+    fun setOrderId(orderId: Int) {
+        this.orderId = orderId
+    }
+
     private val paymentDataLauncher =
         registerForActivityResult(TaskResultContracts.GetPaymentDataResult()) { taskResult ->
             when (taskResult.status.statusCode) {
                 CommonStatusCodes.SUCCESS -> {
                     taskResult.result!!.let {
                         Log.i("Google Pay result:", it.toJson())
-                        model.setPaymentData(it)
+                        model.setPaymentData(it, orderId = orderId)
                     }
                 }
                 //CommonStatusCodes.CANCELED -> The user canceled
@@ -164,12 +174,15 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) {
+                            val payState: PaymentUiState by model.paymentUiState.collectAsStateWithLifecycle()
                             PaymentScreen(
                                 onPopBackStack = { navController.popBackStack() },
                                 onNavigate = {
                                     navController.navigate(it.route)
                                 },
-                                onGooglePayButtonClick = { requestPayment() }
+                                payUiState = payState,
+                                onGooglePayButtonClick = { requestPayment() },
+                                setOrderId = { setOrderId(it) }
                             )
 
                         }
