@@ -66,6 +66,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideUserApi(): UserApi {
+        return retrofit.create(UserApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthApi(): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }

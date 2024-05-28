@@ -12,7 +12,16 @@ interface ProductsApi {
     @GET("products")
     suspend fun getProducts(
         @Query("name") name: String?,
-        @Query("categoryId") categoryId: Int?,
+        @Query("categoryId") categoryId: String?,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+        @Query("sortBy") sortBy: String?,
+        @Query("order") order: String?
+    ): Response<MetadataProducts>
+
+    @GET("products")
+    suspend fun searchProduct(
+        @Query("name") name: String?,
         @Query("page") page: Int,
         @Query("limit") limit: Int,
         @Query("sortBy") sortBy: String?,

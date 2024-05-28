@@ -16,7 +16,7 @@ class ProductsRepositoryImpl @Inject constructor(
 ) : ProductsRepository {
     override suspend fun getProducts(
         name: String,
-        categoryId: Int,
+        categoryId: String,
         page: Int,
         limit: Int,
         sortBy: String,
@@ -25,6 +25,19 @@ class ProductsRepositoryImpl @Inject constructor(
         return Either.catch {
             productsApi.getProducts(name, categoryId, page, limit, sortBy, order)
         }.mapLeft { it.toNetworkError() }
+    }
+
+    override suspend fun searchProduct(
+        name: String,
+        page: Int,
+        limit: Int,
+        sortBy: String,
+        order: String
+    ): Either<NetworkError, Response<MetadataProducts>> {
+        return Either.catch {
+            productsApi.searchProduct(name, page, limit, sortBy, order)
+        }.mapLeft { it.toNetworkError()
+        }
     }
 
     override suspend fun getProductById(id: Int): Either<NetworkError, Response<MetadataProduct>> {

@@ -10,6 +10,8 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.selegend.ecommercemobile.ui.events.ProductListEvent
 import com.selegend.ecommercemobile.ui.home.components.ProductCard
@@ -44,6 +46,9 @@ internal fun ProductCategoryContent(
                 modifier = Modifier.padding(8.dp)
             )
         }
+
+        val itemSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 11).dp
+
         LazyHorizontalGrid(
             rows = GridCells.Fixed(2),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -57,7 +62,7 @@ internal fun ProductCategoryContent(
                 ShimmerListItem(isLoading = isLoading, contentAfterLoading = {
                     ProductCard(
                         modifier = Modifier
-                            .width(194.dp)
+                            .width(itemSize)
                             .fillMaxHeight()
                             .clickable {
                                 onEvent(ProductListEvent.OnProductClick(product.id))

@@ -33,4 +33,5 @@ interface AuthDao {
      */
     @Query("SELECT * FROM auth WHERE id = :id")
     suspend fun getAuthById(id: Int): Auth?
+
 }

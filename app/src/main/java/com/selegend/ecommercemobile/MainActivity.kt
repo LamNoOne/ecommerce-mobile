@@ -121,7 +121,7 @@ class MainActivity : ComponentActivity() {
                             route = "${Routes.PRODUCT}?categoryId={categoryId}&search={search}&page={page}&limit={limit}&sortBy={sortBy}&order={order}",
                             arguments = listOf(
                                 navArgument("categoryId") {
-                                    type = NavType.IntType
+                                    nullable = true
                                 },
                                 navArgument("search") {
                                     nullable = true
@@ -140,9 +140,11 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) {
-                            ProductsScreen(onNavigate = {
-                                navController.navigate(it.route)
-                            })
+                            ProductsScreen(
+                                onPopBackStack = { navController.popBackStack() },
+                                onNavigate = {
+                                    navController.navigate(it.route)
+                                })
                         }
                         composable(Routes.CART) {
                             CartScreen(
@@ -190,7 +192,12 @@ class MainActivity : ComponentActivity() {
                             FavoriteScreen()
                         }
                         composable(Routes.PROFILE) {
-                            ProfileScreen()
+                            ProfileScreen(
+                                onPopBackStack = { navController.popBackStack() },
+                                onNavigate = {
+                                    navController.navigate(it.route)
+                                }
+                            )
                         }
                         composable(Routes.LOGIN) {
                             AuthScreen(

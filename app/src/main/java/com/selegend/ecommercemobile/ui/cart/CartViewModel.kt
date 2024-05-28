@@ -9,13 +9,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.selegend.ecommercemobile.store.domain.model.ProductParams
+import com.selegend.ecommercemobile.store.domain.model.CartProductParams
 import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.model.core.carts.UpdateCart
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.store.domain.repository.CartRepository
 import com.selegend.ecommercemobile.store.domain.repository.ProductsRepository
-import com.selegend.ecommercemobile.ui.products.ProductsDataSource
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import com.selegend.ecommercemobile.ui.utils.sendEvent
 import com.selegend.ecommercemobile.utils.Event
@@ -40,10 +39,9 @@ class CartViewModel @Inject constructor(
     private var _state = MutableStateFlow(CartViewState())
 
     private var auth by mutableStateOf<Auth?>(null)
-
     private var _uiEvent = Channel<UIEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
 
+    val uiEvent = _uiEvent.receiveAsFlow()
     val state = _state.asStateFlow()
 
     init {
@@ -57,16 +55,17 @@ class CartViewModel @Inject constructor(
         getCart()
     }
 
-    private val productParams = ProductParams(
+    private val productParams = CartProductParams(
         name = "",
-        categoryId = 0,
-        limit = 20,
+        limit = 50,
         sortBy = "",
         order = ""
     )
 
-    val productPager = Pager(PagingConfig(pageSize = 20)) {
-        ProductsDataSource(productsRepository, productParams)
+    val productPager = Pager(
+        config = PagingConfig(pageSize = 50)
+    ) {
+        CartProductDataSource(productsRepository, productParams)
     }.flow.cachedIn(viewModelScope)
 
     private fun getCart() {
@@ -76,7 +75,6 @@ class CartViewModel @Inject constructor(
             }
             cartRepository.getCart(getHeaderMap())
                 .onRight { cart ->
-                    Log.d("CartViewModel", "getCart: $cart")
                     _state.update { currentState ->
                         currentState.copy(cart = cart.metadata.cart)
                     }
@@ -137,7 +135,7 @@ class CartViewModel @Inject constructor(
     }
 
     fun onEvent(event: CartEvent) {
-        when(event) {
+        when (event) {
             is CartEvent.OnCartProductClick -> {
                 sendUIEvent(UIEvent.Navigate("${Routes.PRODUCT_DETAIL}?productId=${event.productId}"))
             }

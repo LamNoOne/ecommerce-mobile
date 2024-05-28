@@ -1,6 +1,5 @@
 package com.selegend.ecommercemobile.ui.product_detail
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +14,7 @@ import com.selegend.ecommercemobile.store.domain.repository.ProductsRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import com.selegend.ecommercemobile.utils.Event
 import com.selegend.ecommercemobile.utils.EventBus
+import com.selegend.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,8 +35,11 @@ class ProductDetailViewModel @Inject constructor(
     // set mutable state
     private var _state = MutableStateFlow(ProductDetailViewState())
 
+    private var _cartState = MutableStateFlow(ProductDetailCartViewState())
+
     // get immutable one
     val state = _state.asStateFlow()
+    val cartState = _cartState.asStateFlow()
 
     private var auth by mutableStateOf<Auth?>(null)
 
@@ -47,19 +50,17 @@ class ProductDetailViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
-        val productId = savedStateHandle.get<Int>("productId")
-        productId?.let {
+        savedStateHandle.get<Int>("productId")?.let {
             getProductById(it)
         }
-
         runBlocking {
             authRepository.getAuth(1)?.let {
                 auth = it
             }
         }
-
-        Log.d("ProductDetailViewModel", "init: $auth")
+        getCart()
     }
+
 
     private fun getProductById(id: Int) {
         viewModelScope.launch {
@@ -83,6 +84,28 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
+    private fun getCart() {
+        viewModelScope.launch {
+            _cartState.update {
+                it.copy(isLoading = true)
+            }
+            cartRepository.getCart(getHeaderMap())
+                .onRight { cartResponse ->
+                    _cartState.update {
+                        it.copy(cart = cartResponse.metadata.cart)
+                    }
+                }
+                .onLeft { err ->
+                    _cartState.update {
+                        it.copy(error = err.error.message)
+                    }
+                }
+            _cartState.update {
+                it.copy(isLoading = false)
+            }
+        }
+    }
+
     fun onEvent(event: ProductDetailEvent) {
         when (event) {
             is ProductDetailEvent.OnAddToCartClick -> {
@@ -91,13 +114,19 @@ class ProductDetailViewModel @Inject constructor(
                         getHeaderMap(),
                         AddCart(event.productId, event.quantity)
                     )
-                        .onRight {
+                        .onRight {cartResponse ->
+                            _cartState.update { it.copy(isLoading = true) }
+                            _cartState.update { it.copy(cart = cartResponse.metadata.cart) }
+                            _cartState.update { it.copy(isLoading = false) }
                             EventBus.sendEvent(Event.Toast("Add to cart successfully!"))
                         }
                         .onLeft { err ->
                             EventBus.sendEvent(Event.Toast(err.error.message))
                         }
                 }
+            }
+            is ProductDetailEvent.OnCartClick -> {
+                sendUIEvent(UIEvent.Navigate(Routes.CART))
             }
         }
     }

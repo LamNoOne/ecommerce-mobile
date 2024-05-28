@@ -2,8 +2,12 @@
 
 package com.selegend.ecommercemobile.ui.home.screens
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material.BottomNavigationItem
@@ -15,22 +19,41 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.selegend.ecommercemobile.ui.auth.AuthViewModel
+import com.selegend.ecommercemobile.ui.components.SuggestedProduct
 import com.selegend.ecommercemobile.ui.home.events.CoreEvent
+import com.selegend.ecommercemobile.ui.home.events.SearchProductEvent
 import com.selegend.ecommercemobile.ui.home.viewmodels.CoreViewModel
+import com.selegend.ecommercemobile.ui.home.viewmodels.SearchViewModel
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 
 @Composable
 fun HomeScreen(
     onNavigate: (UIEvent.Navigate) -> Unit,
     coreViewModel: CoreViewModel = hiltViewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
+
+    val suggestedProduct by searchViewModel.state.collectAsStateWithLifecycle()
+
     LaunchedEffect(key1 = true) {
         coreViewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.Navigate -> onNavigate(event)
+                else -> Unit
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        searchViewModel.uiEvent.collect { event ->
             when (event) {
                 is UIEvent.Navigate -> onNavigate(event)
                 else -> Unit
@@ -61,11 +84,23 @@ fun HomeScreen(
                     else Modifier.weight(1f),
                     shape = SearchBarDefaults.fullScreenShape,
                     query = text,
-                    onQueryChange = { text = it },
-                    onSearch = {
-                        items.add(text)
-                        active = false
+                    onQueryChange = {
+                        text = it
+                        searchViewModel.onEvent(SearchProductEvent.OnSearchQueryChange(it))
                     },
+                    onSearch = {
+//                        items.add(text)
+//                        active = false
+                        searchViewModel.onEvent(SearchProductEvent.OnSubmitSearch(text))
+                    },
+                    colors = SearchBarDefaults.colors(
+                        containerColor = Color.White,
+                        inputFieldColors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color.White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        )
+                    ),
                     active = active,
                     onActiveChange = { active = it },
                     placeholder = { Text("Search") },
@@ -84,28 +119,59 @@ fun HomeScreen(
                         }
                     }
                 ) {
-                    items.forEach {
-                        Row(
-                            modifier = Modifier
-                                .padding(all = 14.dp)
-                                .zIndex(1f)
+//                    items.forEach {
+//                        Row(
+//                            modifier = Modifier
+//                                .padding(all = 14.dp)
+//                        ) {
+//                            Icon(
+//                                modifier = Modifier.padding(end = 10.dp),
+//                                imageVector = Icons.Default.History,
+//                                contentDescription = "History Icon"
+//                            )
+//                            Text(text = it)
+//                        }
+//                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 56.dp)
+                    ) {
+                        Text(
+                            text = "Search suggestions",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontSize = 14.sp,
+                            color = Color.DarkGray,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(8.dp)
                         ) {
-                            Icon(
-                                modifier = Modifier.padding(end = 10.dp),
-                                imageVector = Icons.Default.History,
-                                contentDescription = "History Icon"
-                            )
-                            Text(text = it)
+                            suggestedProduct.products?.let { it ->
+                                items(it) {
+                                    SuggestedProduct(
+                                        product = it,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(120.dp)
+                                            .border(1.dp, MaterialTheme.colorScheme.surfaceVariant)
+                                            .clickable {
+                                                searchViewModel.onEvent(
+                                                    SearchProductEvent.OnProductClick(
+                                                        it.id
+                                                    )
+                                                )
+                                            }
+                                    )
+                                }
+
+                            }
                         }
                     }
-                }
-                if (!active) {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "Shopping Cart Icon"
-                        )
-                    }
+
                 }
             }
         },
@@ -202,3 +268,16 @@ fun HomeScreen(
         }
     }
 }
+
+fun Modifier.badgeLayout() =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+
+        // based on the expectation of only one line of text
+        val minPadding = placeable.height / 4
+
+        val width = maxOf(placeable.width + minPadding, placeable.height) / 2
+        layout(width, placeable.height / 2) {
+            placeable.place((width - placeable.width) / 2, -placeable.height / 4)
+        }
+    }

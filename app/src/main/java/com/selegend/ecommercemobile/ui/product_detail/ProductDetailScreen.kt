@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -43,7 +44,6 @@ import com.selegend.ecommercemobile.ui.home.screens.AccessoryScreen
 import com.selegend.ecommercemobile.ui.product_detail.components.SpecificationItem
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,32 +53,29 @@ fun ProductDetailScreen(
     onNavigate: (UIEvent.Navigate) -> Unit,
     viewModel: ProductDetailViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
-    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
-    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
-    var valueCounter by remember {
-        mutableStateOf(1)
-    }
-
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
+                is UIEvent.PopBackStack -> onPopBackStack()
                 is UIEvent.ShowSnackBar -> {
-                    scope.launch {
-                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-                        val result = scaffoldState.snackbarHostState.showSnackbar(
-                            message = event.message,
-                            actionLabel = event.action,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action,
+                        duration = SnackbarDuration.Short
+                    )
                 }
                 is UIEvent.Navigate -> onNavigate(event)
                 else -> Unit
             }
         }
+    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val cartState by viewModel.cartState.collectAsStateWithLifecycle()
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+    var valueCounter by remember {
+        mutableStateOf(1)
     }
 
     if (state.isLoading) {
@@ -119,22 +116,27 @@ fun ProductDetailScreen(
                             )
                         }
 
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {
+                            viewModel.onEvent(ProductDetailEvent.OnCartClick)
+                        }) {
                             Box() {
-                                Text(
-                                    text = "1",
-                                    color = Color.White,
-                                    fontSize = 8.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier
-                                        .background(
-                                            MaterialTheme.colorScheme.error,
-                                            shape = CircleShape
-                                        )
-                                        .badgeLayout()
-                                        .padding(end = 0.dp)
-                                )
-                                Icon(
+                                cartState.cart?.let {
+                                    Text(
+                                        text = "${it.total}",
+                                        color = Color.White,
+                                        fontSize = 8.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        modifier = Modifier
+                                            .background(
+                                                MaterialTheme.colorScheme.error,
+                                                shape = CircleShape
+                                            )
+                                            .badgeLayout()
+                                            .padding(end = 0.dp)
+                                            .zIndex(2f)
+                                    )
+                                }
+                                androidx.compose.material3.Icon(
                                     imageVector = Icons.Default.ShoppingCart,
                                     contentDescription = "Shopping cart"
                                 )

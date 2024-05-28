@@ -2,11 +2,12 @@ package com.selegend.ecommercemobile.ui.cart
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -16,17 +17,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.google.accompanist.flowlayout.FlowMainAxisAlignment
+import com.google.accompanist.flowlayout.SizeMode
 import com.selegend.ecommercemobile.store.domain.model.core.payment.ProductPayment
 import com.selegend.ecommercemobile.store.domain.model.core.products.Product
 import com.selegend.ecommercemobile.ui.cart.components.ProductCart
+import com.selegend.ecommercemobile.ui.components.ErrorItem
+import com.selegend.ecommercemobile.ui.components.LoadingItem
+import com.selegend.ecommercemobile.ui.home.components.ProductCard
 import com.selegend.ecommercemobile.ui.product_detail.badgeLayout
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 
@@ -36,19 +45,34 @@ fun CartScreen(
     onNavigate: (UIEvent.Navigate) -> Unit,
     viewModel: CartViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
     val scaffoldState = rememberScaffoldState()
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.PopBackStack -> onPopBackStack()
+                is UIEvent.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                is UIEvent.Navigate -> onNavigate(event)
+                else -> Unit
+            }
+        }
+    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val productsData: LazyPagingItems<Product> = viewModel.productPager.collectAsLazyPagingItems()
     var checked by remember { mutableStateOf(false) }
-    var isAtLeastOneChecked by remember { mutableStateOf(false) }
-    var selectedItem = remember {
+    var totalPayment by remember { mutableStateOf(0.0) }
+    val selectedItem = remember {
         mutableListOf<ProductPayment>()
     }
 
-    val productsData: LazyPagingItems<Product> =
-        viewModel.productPager.collectAsLazyPagingItems()
-
-    Log.d("CartScreen", "CartScreen product state: ${productsData.itemCount}")
-
+    fun updateTotalPayment() {
+        totalPayment = selectedItem.sumOf { it.product.price * it.quantity }.toDouble()
+    }
 
     fun updateSelectedItem(item: ProductPayment) {
         selectedItem.add(item)
@@ -62,24 +86,6 @@ fun CartScreen(
         checked = status
     }
 
-    fun updateAtLeastOneChecked(status: Boolean) {
-        isAtLeastOneChecked = status
-    }
-
-    LaunchedEffect(key1 = true) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is UIEvent.ShowSnackBar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message,
-                        actionLabel = event.action
-                    )
-                }
-                is UIEvent.Navigate -> onNavigate(event)
-                else -> Unit
-            }
-        }
-    }
     if (state.isLoading) {
         Row(
             modifier = Modifier
@@ -194,6 +200,7 @@ fun CartScreen(
                                     } else {
                                         selectedItem.clear()
                                     }
+                                    updateTotalPayment()
                                 })
                             Text(
                                 text = "All items",
@@ -217,7 +224,7 @@ fun CartScreen(
                                     color = Color.Black
                                 )
                                 Text(
-                                    text = "$${totalPayment(state)}",
+                                    text = "$$totalPayment",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Red
@@ -226,7 +233,10 @@ fun CartScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
                                 onClick = {
-                                    Log.d("CartScreen", "CartScreen selected items: $selectedItem")
+                                    Log.d(
+                                        "CartScreen",
+                                        "CartScreen selected items: $selectedItem"
+                                    )
                                     Log.d(
                                         "CartScreen",
                                         "CartScreen selected quantity: ${selectedItem.size}"
@@ -266,16 +276,15 @@ fun CartScreen(
             }
         }
     ) { it ->
-        LazyVerticalStaggeredGrid(
+        LazyColumn(
             modifier = Modifier.padding(
                 top = it.calculateTopPadding(),
                 bottom = it.calculateBottomPadding(),
                 start = 8.dp,
                 end = 8.dp
             ),
-            columns = StaggeredGridCells.Fixed(1),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalItemSpacing = 10.dp
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             state.cart?.products?.let { it1 ->
                 items(it1.count()) { index ->
@@ -307,6 +316,7 @@ fun CartScreen(
                         itemChecked = itemChecked,
                         updateSelectedItem = { updateSelectedItem(it) },
                         deleteSelectedItem = { deleteSelectedItem(it) },
+                        updateTotalPayment = { updateTotalPayment() },
                         productCart = it1[index],
                         modifier = Modifier
                             .fillMaxSize()
@@ -314,17 +324,62 @@ fun CartScreen(
                     )
                 }
             }
+
+            item {
+                val dividerSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 90).dp
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(32.dp)
+                        .background(Color.Transparent),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = Color.LightGray,
+                        modifier = Modifier.width(dividerSize)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Recommended for you", fontSize = 14.sp, color = Color.DarkGray)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = Color.LightGray,
+                        modifier = Modifier.width(dividerSize)
+                    )
+                }
+            }
+
+            item {
+                val itemSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 11).dp
+                com.google.accompanist.flowlayout.FlowRow(
+                    mainAxisSize = SizeMode.Expand,
+                    mainAxisAlignment = FlowMainAxisAlignment.SpaceBetween
+                ) {
+                    for (index in 0 until productsData.itemCount) {
+                        ProductCard(
+                            modifier = Modifier
+                                .width(itemSize)
+                                .height(268.dp)
+                                .padding(bottom = 8.dp)
+                                .clickable {
+                                    viewModel.onEvent(CartEvent.OnProductClick(productsData[index]!!.id))
+                                },
+                            product = productsData[index]!!
+                        )
+                    }
+                    when (productsData.loadState.append) {
+                        is LoadState.NotLoading -> Unit
+                        is LoadState.Loading -> {
+                            LoadingItem()
+                        }
+                        is LoadState.Error -> {
+                            ErrorItem(message = (productsData.loadState.append as LoadState.Error).error.message.toString())
+                        }
+                    }
+                }
+            }
         }
     }
-}
-
-
-private fun totalPayment(state: CartViewState): Double {
-    var total = 0.0
-    state.cart?.products?.let {
-        for (i in it) {
-            total += i.product.price * i.quantity
-        }
-    }
-    return total
 }

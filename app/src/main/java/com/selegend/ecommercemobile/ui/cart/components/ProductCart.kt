@@ -1,6 +1,7 @@
 package com.selegend.ecommercemobile.ui.cart.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
@@ -32,6 +33,7 @@ fun ProductCart(
     updateItemChecked: (Boolean) -> Unit,
     updateSelectedItem: (ProductPayment) -> Unit,
     deleteSelectedItem: (ProductPayment) -> Unit,
+    updateTotalPayment: () -> Unit,
     productCart: ProductPayment
 ) {
 
@@ -59,7 +61,10 @@ fun ProductCart(
             .height(140.dp)
             .background(Color.White)
             .clip(RoundedCornerShape(16.dp))
-            .padding(vertical = 6.dp),
+            .padding(vertical = 6.dp)
+            .clickable {
+                onEvent(CartEvent.OnProductClick(productCart.product.id))
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -71,6 +76,7 @@ fun ProductCart(
                 updateAllChecked(false)
                 deleteSelectedItem(productCart)
             }
+            updateTotalPayment()
         })
         AsyncImage(
             model = productCart.product.imageUrl,

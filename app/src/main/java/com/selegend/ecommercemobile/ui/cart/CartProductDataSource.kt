@@ -1,17 +1,17 @@
-package com.selegend.ecommercemobile.ui.products
+package com.selegend.ecommercemobile.ui.cart
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import arrow.core.Either
+import com.selegend.ecommercemobile.store.domain.model.CartProductParams
 import com.selegend.ecommercemobile.store.domain.model.MetadataProducts
-import com.selegend.ecommercemobile.store.domain.model.ProductParams
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.products.Product
 import com.selegend.ecommercemobile.store.domain.repository.ProductsRepository
 
-class ProductsDataSource(
+class CartProductDataSource(
     private val productsRepository: ProductsRepository,
-    private val productParams: ProductParams
+    private val productParams: CartProductParams
 ) : PagingSource<Int, Product>() {
     override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -23,9 +23,8 @@ class ProductsDataSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
             val nextPageNumber = params.key ?: 1
-            val response = productsRepository.getProducts(
+            val response = productsRepository.searchProduct(
                 name = productParams.name,
-                categoryId = productParams.categoryId,
                 page = nextPageNumber,
                 limit = productParams.limit,
                 sortBy = productParams.sortBy,
