@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.selegend.ecommercemobile.core.AnnotationInterceptor
 import com.selegend.ecommercemobile.store.data.auth.AuthDatabase
-import com.selegend.ecommercemobile.store.data.remote.*
+import com.selegend.ecommercemobile.store.domain.remote.*
 import com.selegend.ecommercemobile.utils.Constants
 import dagger.Module
 import dagger.Provides

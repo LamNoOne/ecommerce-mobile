@@ -25,6 +25,7 @@ import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.store.domain.repository.CheckoutRepository
 import com.selegend.ecommercemobile.store.domain.repository.TransactionRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
+import com.selegend.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.channels.Channel
@@ -55,7 +56,7 @@ class PaymentViewModel @Inject constructor(
 
 
     // make a transaction to server and receive a transaction id
-    private var _transactionState = MutableStateFlow(TransactionViewState())
+    private var _transactionState = MutableStateFlow(TransactionViewState(success = false))
     val transactionState = _transactionState.asStateFlow()
 
     private var auth by mutableStateOf<Auth?>(null)
@@ -105,6 +106,14 @@ class PaymentViewModel @Inject constructor(
                     }
                 }
             _state.update { it.copy(isLoading = false) }
+        }
+    }
+
+    fun onEvent(event: PaymentEvent) {
+        when (event) {
+            is PaymentEvent.OnClickContinue -> {
+                sendUIEvent(UIEvent.Navigate(Routes.HOME))
+            }
         }
     }
 
@@ -193,6 +202,7 @@ class PaymentViewModel @Inject constructor(
                 _transactionState.update { currentState ->
                     currentState.copy(
                         transactionId = transactionResponse.metadata.transaction.id,
+                        orderId = orderId,
                         success = transactionResponse.metadata.success
                     )
                 }

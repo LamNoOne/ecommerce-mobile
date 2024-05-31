@@ -1,4 +1,5 @@
 package com.selegend.ecommercemobile.ui.payment
 
-class PaymentEvent {
+sealed class PaymentEvent {
+    object OnClickContinue: PaymentEvent()
 }

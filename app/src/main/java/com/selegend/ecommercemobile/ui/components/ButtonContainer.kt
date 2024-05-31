@@ -1,10 +1,12 @@
 package com.selegend.ecommercemobile.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Clear
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -31,8 +34,8 @@ fun ButtonContainer(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxSize()
-//            .clip(RoundedCornerShape(20.dp))
-            .background(Color.Black.copy(alpha = CONTAINER_BACKGROUND_ALPHA_INITIAL))
+            .clip(RoundedCornerShape(4.dp))
+            .background(Color.White.copy(alpha = CONTAINER_BACKGROUND_ALPHA_INITIAL))
             .padding(horizontal = 8.dp)
     ) {
         // decrease button
@@ -40,7 +43,8 @@ fun ButtonContainer(
             icon = Icons.Outlined.Remove,
             contentDescription = "Decrease count",
             onClick = onValueDecreaseClick,
-            tintColor = Color.White.copy(alpha = ICON_BUTTON_ALPHA_INITIAL)
+            tintColor = Color.Black.copy(alpha = ICON_BUTTON_ALPHA_INITIAL),
+            modifier = Modifier.border(width = 1.dp, Color.LightGray, RoundedCornerShape(4.dp))
         )
 
         // clear button
@@ -49,7 +53,8 @@ fun ButtonContainer(
                 icon = Icons.Outlined.Clear,
                 contentDescription = "Clear count",
                 onClick = onValueClearClick,
-                tintColor = Color.White.copy(alpha = ICON_BUTTON_ALPHA_INITIAL)
+                tintColor = Color.Black.copy(alpha = ICON_BUTTON_ALPHA_INITIAL),
+                modifier = Modifier.border(width = 1.dp, Color.LightGray, RoundedCornerShape(4.dp))
             )
         }
 
@@ -58,7 +63,8 @@ fun ButtonContainer(
             icon = Icons.Outlined.Add,
             contentDescription = "Increase count",
             onClick = onValueIncreaseClick,
-            tintColor = Color.White.copy(alpha = ICON_BUTTON_ALPHA_INITIAL)
+            tintColor = Color.Black.copy(alpha = ICON_BUTTON_ALPHA_INITIAL),
+            modifier = Modifier.border(width = 1.dp, Color.LightGray, RoundedCornerShape(4.dp))
         )
     }
 }

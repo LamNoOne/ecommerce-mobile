@@ -9,13 +9,19 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,13 +34,15 @@ import com.selegend.ecommercemobile.ui.cart.CartScreen
 import com.selegend.ecommercemobile.ui.checkout.CheckoutScreen
 import com.selegend.ecommercemobile.ui.favorite.FavoriteScreen
 import com.selegend.ecommercemobile.ui.home.screens.HomeScreen
+import com.selegend.ecommercemobile.ui.orders.OrdersScreen
 import com.selegend.ecommercemobile.ui.payment.PaymentScreen
 import com.selegend.ecommercemobile.ui.payment.PaymentUiState
 import com.selegend.ecommercemobile.ui.payment.PaymentViewModel
+import com.selegend.ecommercemobile.ui.payment.TransactionViewState
 import com.selegend.ecommercemobile.ui.product_detail.ProductDetailScreen
 import com.selegend.ecommercemobile.ui.products.ProductsScreen
-import com.selegend.ecommercemobile.ui.profile.ProfileScreen
 import com.selegend.ecommercemobile.ui.theme.EcommerceMobileTheme
+import com.selegend.ecommercemobile.ui.user.UserScreen
 import com.selegend.ecommercemobile.utils.Event
 import com.selegend.ecommercemobile.utils.EventBus
 import com.selegend.ecommercemobile.utils.Routes
@@ -177,22 +185,31 @@ class MainActivity : ComponentActivity() {
                             )
                         ) {
                             val payState: PaymentUiState by model.paymentUiState.collectAsStateWithLifecycle()
+                            val transactionState: TransactionViewState by model.transactionState.collectAsStateWithLifecycle()
                             PaymentScreen(
                                 onPopBackStack = { navController.popBackStack() },
                                 onNavigate = {
                                     navController.navigate(it.route)
                                 },
                                 payUiState = payState,
+                                transactionState = transactionState,
                                 onGooglePayButtonClick = { requestPayment() },
                                 setOrderId = { setOrderId(it) }
                             )
-
                         }
                         composable(Routes.FAVORITE) {
                             FavoriteScreen()
                         }
-                        composable(Routes.PROFILE) {
-                            ProfileScreen(
+                        composable(Routes.USER) {
+                            UserScreen(
+                                onPopBackStack = { navController.popBackStack() },
+                                onNavigate = {
+                                    navController.navigate(it.route)
+                                }
+                            )
+                        }
+                        composable(Routes.ORDER_HISTORY) {
+                            OrdersScreen(
                                 onPopBackStack = { navController.popBackStack() },
                                 onNavigate = {
                                     navController.navigate(it.route)
@@ -217,4 +234,13 @@ class MainActivity : ComponentActivity() {
         val task = model.getLoadPaymentDataTask(priceCents = 1000L)
         task.addOnCompleteListener(paymentDataLauncher::launch)
     }
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T {
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return hiltViewModel(parentEntry)
 }

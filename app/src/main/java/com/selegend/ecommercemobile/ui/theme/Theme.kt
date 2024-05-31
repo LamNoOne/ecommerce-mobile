@@ -45,6 +45,9 @@ fun EcommerceMobileTheme(
         systemUIController.setSystemBarsColor(
             color = colors.surfaceContainerLow
         )
+        systemUIController.setNavigationBarColor(
+            color = colors.surfaceContainer
+        )
     }
 
     MaterialTheme(

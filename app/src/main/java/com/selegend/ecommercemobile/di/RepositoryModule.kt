@@ -1,6 +1,6 @@
 package com.selegend.ecommercemobile.di
 
-import com.selegend.ecommercemobile.store.data.remote.repository.*
+import com.selegend.ecommercemobile.store.data.repository.*
 import com.selegend.ecommercemobile.store.domain.repository.*
 import dagger.Binds
 import dagger.Module

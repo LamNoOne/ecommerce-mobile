@@ -47,9 +47,11 @@ fun PaymentScreen(
     onGooglePayButtonClick: () -> Unit,
     payUiState: PaymentUiState = PaymentUiState.NotStarted,
     setOrderId: (Int) -> Unit,
+    transactionState: TransactionViewState,
     viewModel: PaymentViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    Log.d("PaymentScreen", "state: ${transactionState.transactionId}:::${transactionState.success}")
     setOrderId(state.order?.orderId ?: 0)
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
@@ -71,10 +73,10 @@ fun PaymentScreen(
             }
         }
     }
-    Log.d("PaymentScreen", "Payment state: $payUiState")
+    Log.d("PaymentScreen", "c: $payUiState")
 
-    if (payUiState is PaymentUiState.PaymentCompleted) {
-        Log.d("PaymentScreen Transaction ID", payUiState.transactionId)
+    if (transactionState.success && transactionState.orderId == state.order?.orderId) {
+        Log.d("PaymentScreen Transaction ID", transactionState.transactionId.toString())
         Column(
             modifier = Modifier
                 .testTag("successScreen")
@@ -127,7 +129,7 @@ fun PaymentScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { viewModel.onEvent(PaymentEvent.OnClickContinue) },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 modifier = Modifier.height(60.dp)
             ) {

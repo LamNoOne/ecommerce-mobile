@@ -145,5 +145,4 @@ dependencies {
 
     //FlowLayout
     implementation "com.google.accompanist:accompanist-flowlayout:0.20.0"
-
 }

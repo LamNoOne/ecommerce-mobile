@@ -66,6 +66,7 @@ fun ProductsScreen(
     }
 
     val productsData: LazyPagingItems<Product> = viewModel.productPager.collectAsLazyPagingItems()
+    val selectionSortState by viewModel.selected.collectAsStateWithLifecycle()
 
     val suggestedProduct by searchViewModel.state.collectAsStateWithLifecycle()
     var active by remember { mutableStateOf(false) }
@@ -195,6 +196,7 @@ fun ProductsScreen(
                         productsData.refresh()
                     },
                     text = "Best Match",
+                    active = selectionSortState.isBestMatch
                 )
                 SortButton(
                     buttonSortSize = buttonSortSize,
@@ -203,6 +205,7 @@ fun ProductsScreen(
                         productsData.refresh()
                     },
                     text = "Low - High",
+                    active = selectionSortState.isPriceLowToHigh
                 )
                 SortButton(
                     buttonSortSize = buttonSortSize,
@@ -211,6 +214,7 @@ fun ProductsScreen(
                         productsData.refresh()
                     },
                     text = "High - Low",
+                    active = selectionSortState.isPriceHighToLow
                 )
             }
 

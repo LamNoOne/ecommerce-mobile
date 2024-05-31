@@ -29,7 +29,7 @@ class CoreViewModel @Inject constructor(): ViewModel() {
                 sendUIEvent(UIEvent.Navigate(Routes.CART))
             }
             is CoreEvent.OnProfileClick -> {
-                sendUIEvent(UIEvent.Navigate(Routes.PROFILE))
+                sendUIEvent(UIEvent.Navigate(Routes.USER))
             }
             is CoreEvent.OnLoginClick -> {
                 sendUIEvent(UIEvent.Navigate(Routes.LOGIN))

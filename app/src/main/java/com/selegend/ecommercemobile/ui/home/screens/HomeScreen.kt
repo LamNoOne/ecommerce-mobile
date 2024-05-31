@@ -19,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
@@ -30,30 +31,28 @@ import com.selegend.ecommercemobile.ui.components.SuggestedProduct
 import com.selegend.ecommercemobile.ui.home.events.CoreEvent
 import com.selegend.ecommercemobile.ui.home.events.SearchProductEvent
 import com.selegend.ecommercemobile.ui.home.viewmodels.CoreViewModel
+import com.selegend.ecommercemobile.ui.home.viewmodels.ProductTypeViewModel
 import com.selegend.ecommercemobile.ui.home.viewmodels.SearchViewModel
 import com.selegend.ecommercemobile.ui.utils.UIEvent
+import kotlinx.coroutines.flow.merge
 
 @Composable
 fun HomeScreen(
     onNavigate: (UIEvent.Navigate) -> Unit,
     coreViewModel: CoreViewModel = hiltViewModel(),
     searchViewModel: SearchViewModel = hiltViewModel(),
+    productTypeViewModel: ProductTypeViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
 
     val suggestedProduct by searchViewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = true) {
-        coreViewModel.uiEvent.collect { event ->
-            when (event) {
-                is UIEvent.Navigate -> onNavigate(event)
-                else -> Unit
-            }
-        }
-    }
-
-    LaunchedEffect(key1 = true) {
-        searchViewModel.uiEvent.collect { event ->
+        merge(
+            coreViewModel.uiEvent,
+            searchViewModel.uiEvent,
+            productTypeViewModel.uiEvent
+        ).collect { event ->
             when (event) {
                 is UIEvent.Navigate -> onNavigate(event)
                 else -> Unit
@@ -179,8 +178,9 @@ fun HomeScreen(
             BottomAppBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-                containerColor = MaterialTheme.colorScheme.surface
+                    .height(56.dp)
+                    .shadow(10.dp),
+                containerColor = Color.White
             ) {
                 BottomNavigationItem(
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home Icon") },
@@ -235,34 +235,58 @@ fun HomeScreen(
             item {
                 Column(modifier = Modifier.fillMaxSize()) {
                     CategoryScreen(modifier = Modifier.fillMaxSize(), onNavigate = onNavigate)
-                    SmartPhoneScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        onNavigate = onNavigate
+                    ProductTypeSession(
+                        onEvent = productTypeViewModel::onEvent,
+                        state = productTypeViewModel.smartphoneState
                     )
-                    LaptopScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        onNavigate = onNavigate
+                    ProductTypeSession(
+                        onEvent = productTypeViewModel::onEvent,
+                        state = productTypeViewModel.laptopState
                     )
-                    AccessoryScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        onNavigate = onNavigate
+                    ProductTypeSession(
+                        onEvent = productTypeViewModel::onEvent,
+                        state = productTypeViewModel.accessoryState
                     )
-                    CameraScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        onNavigate = onNavigate
+                    ProductTypeSession(
+                        onEvent = productTypeViewModel::onEvent,
+                        state = productTypeViewModel.cameraState
                     )
-                    PCScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        onNavigate = onNavigate
+                    ProductTypeSession(
+                        onEvent = productTypeViewModel::onEvent,
+                        state = productTypeViewModel.pcState
                     )
-                    StudioScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        onNavigate = onNavigate
+                    ProductTypeSession(
+                        onEvent = productTypeViewModel::onEvent,
+                        state = productTypeViewModel.studioState
                     )
-                    TVScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        onNavigate = onNavigate
+                    ProductTypeSession(
+                        onEvent = productTypeViewModel::onEvent,
+                        state = productTypeViewModel.tvState
                     )
+//                    LaptopScreen(
+//                        modifier = Modifier.fillMaxSize(),
+//                        onNavigate = onNavigate
+//                    )
+//                    AccessoryScreen(
+//                        modifier = Modifier.fillMaxSize(),
+//                        onNavigate = onNavigate
+//                    )
+//                    CameraScreen(
+//                        modifier = Modifier.fillMaxSize(),
+//                        onNavigate = onNavigate
+//                    )
+//                    PCScreen(
+//                        modifier = Modifier.fillMaxSize(),
+//                        onNavigate = onNavigate
+//                    )
+//                    StudioScreen(
+//                        modifier = Modifier.fillMaxSize(),
+//                        onNavigate = onNavigate
+//                    )
+//                    TVScreen(
+//                        modifier = Modifier.fillMaxSize(),
+//                        onNavigate = onNavigate
+//                    )
                 }
             }
         }

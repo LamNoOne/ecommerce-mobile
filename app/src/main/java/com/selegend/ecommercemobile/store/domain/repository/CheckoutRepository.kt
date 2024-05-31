@@ -22,6 +22,9 @@ interface CheckoutRepository {
         headers: Map<String, String>,
         page: Int,
         limit: Int,
-        name: Int
+        sortBy: String,
+        order: String,
+        status: String,
+        name: String,
     ): Either<NetworkError, Response<MetadataOrders>>
 }

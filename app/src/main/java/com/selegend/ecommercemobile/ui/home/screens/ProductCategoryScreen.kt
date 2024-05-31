@@ -18,47 +18,44 @@ import com.selegend.ecommercemobile.ui.home.components.ProductCard
 import com.selegend.ecommercemobile.ui.home.viewstates.ProductCategoryViewState
 import com.selegend.ecommercemobile.ui.utils.ShimmerListItem
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 internal fun ProductCategoryContent(
-    state: ProductCategoryViewState,
+    state: StateFlow<ProductCategoryViewState>,
     onEvent: (ProductListEvent) -> Unit,
-    title: String = ""
 ) {
-    var isLoading by remember { mutableStateOf(state.isLoading) }
+    val productState by state.collectAsState()
+    var isLoading by remember { mutableStateOf(productState.isLoading) }
 
     LaunchedEffect(key1 = true) {
         delay(300)
         isLoading = false
     }
 
-    state.products.forEach { (category, products) ->
-        if (title.isBlank()) {
-            Text(
-                text = category,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp)
-            )
-        } else {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
+    val title = productState.products?.name
 
-        val itemSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 11).dp
+    if (title != null) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
 
-        LazyHorizontalGrid(
-            rows = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .padding(8.dp)
-                .fillMaxSize()
-        ) {
-            items(products) { product ->
+    val itemSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 11).dp
+
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .padding(8.dp)
+            .fillMaxSize()
+    ) {
+        productState.products?.let {
+            items(it.products) { product ->
                 ShimmerListItem(isLoading = isLoading, contentAfterLoading = {
                     ProductCard(
                         modifier = Modifier

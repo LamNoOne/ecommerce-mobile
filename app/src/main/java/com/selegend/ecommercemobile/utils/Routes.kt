@@ -16,4 +16,6 @@ object Routes {
     const val SEARCH = "search"
     const val CHECKOUT = "checkout"
     const val PAYMENT = "payment"
+    const val AUTH = "auth"
+    const val USER = "user"
 }

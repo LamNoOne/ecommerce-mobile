@@ -12,7 +12,9 @@ import com.selegend.ecommercemobile.ui.utils.UIEvent
 import com.selegend.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,6 +44,8 @@ class ProductsViewModel @Inject constructor(
         ProductsDataSource(productsRepository, productParams)
     }.flow.cachedIn(viewModelScope)
 
+    var selected = MutableStateFlow(SelectionSortState())
+
     fun onEvent(event: ProductsEvent) {
         when (event) {
             is ProductsEvent.OnProductClick -> {
@@ -58,6 +62,13 @@ class ProductsViewModel @Inject constructor(
                     sortBy = event.sortBy,
                     order = event.order
                 )
+                selected.update {
+                    it.copy(
+                        isBestMatch = true,
+                        isPriceLowToHigh = false,
+                        isPriceHighToLow = false
+                    )
+                }
                 productPager = Pager(PagingConfig(pageSize = 20)) {
                     ProductsDataSource(productsRepository, productQuery)
                 }.flow.cachedIn(viewModelScope)
@@ -70,6 +81,13 @@ class ProductsViewModel @Inject constructor(
                     sortBy = event.sortBy,
                     order = event.order
                 )
+                selected.update {
+                    it.copy(
+                        isBestMatch = false,
+                        isPriceLowToHigh = false,
+                        isPriceHighToLow = true
+                    )
+                }
                 productPager = Pager(PagingConfig(pageSize = 20)) {
                     ProductsDataSource(productsRepository, productQuery)
                 }.flow.cachedIn(viewModelScope)
@@ -82,6 +100,13 @@ class ProductsViewModel @Inject constructor(
                     sortBy = event.sortBy,
                     order = event.order
                 )
+                selected.update {
+                    it.copy(
+                        isBestMatch = false,
+                        isPriceLowToHigh = true,
+                        isPriceHighToLow = false
+                    )
+                }
                 productPager = Pager(PagingConfig(pageSize = 20)) {
                     ProductsDataSource(productsRepository, productQuery)
                 }.flow.cachedIn(viewModelScope)

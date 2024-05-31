@@ -59,8 +59,8 @@ fun ProductCart(
         modifier = Modifier
             .fillMaxWidth()
             .height(140.dp)
-            .background(Color.White)
             .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
             .padding(vertical = 6.dp)
             .clickable {
                 onEvent(CartEvent.OnProductClick(productCart.product.id))

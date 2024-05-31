@@ -40,7 +40,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.selegend.ecommercemobile.ui.components.CounterButton
-import com.selegend.ecommercemobile.ui.home.screens.AccessoryScreen
 import com.selegend.ecommercemobile.ui.product_detail.components.SpecificationItem
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import kotlinx.coroutines.delay
@@ -345,10 +344,10 @@ fun ProductDetailScreen(
                             }
                         }
                     }
-                    AccessoryScreen(
-                        onNavigate = onNavigate,
-                        title = "Accessories purchased together"
-                    )
+//                    AccessoryScreen(
+//                        onNavigate = onNavigate,
+//                        title = "Accessories purchased together"
+//                    )
                 }
             }
             if (isSheetOpen) {

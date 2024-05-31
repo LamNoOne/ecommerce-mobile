@@ -1,10 +1,10 @@
 package com.selegend.ecommercemobile.ui.cart
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.SnackbarDuration
@@ -30,6 +30,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
+import com.selegend.ecommercemobile.helpers.ScrollDirection
+import com.selegend.ecommercemobile.helpers.rememberDirectionalLazyListState
 import com.selegend.ecommercemobile.store.domain.model.core.payment.ProductPayment
 import com.selegend.ecommercemobile.store.domain.model.core.products.Product
 import com.selegend.ecommercemobile.ui.cart.components.ProductCart
@@ -84,6 +86,24 @@ fun CartScreen(
 
     fun updateAllChecked(status: Boolean) {
         checked = status
+    }
+
+    val lazyListState = rememberLazyListState()
+    val directionalLazyListState = rememberDirectionalLazyListState(
+        lazyListState
+    )
+
+    val scrollOffset by remember {
+        derivedStateOf { lazyListState.firstVisibleItemScrollOffset
+        }
+    }
+
+
+
+    val color = when (directionalLazyListState.scrollDirection) {
+        ScrollDirection.Up -> Color.Green
+        ScrollDirection.Down -> Color.Blue
+        else -> Color.Black
     }
 
     if (state.isLoading) {
@@ -178,7 +198,7 @@ fun CartScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -233,29 +253,18 @@ fun CartScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Button(
                                 onClick = {
-                                    Log.d(
-                                        "CartScreen",
-                                        "CartScreen selected items: $selectedItem"
-                                    )
-                                    Log.d(
-                                        "CartScreen",
-                                        "CartScreen selected quantity: ${selectedItem.size}"
-                                    )
                                     if (selectedItem.size > 0) {
                                         viewModel.onEvent(CartEvent.OnCheckoutClick(selectedItem))
                                     } else {
-                                        Log.d(
-                                            "CartScreen",
-                                            "CartScreen: Please select at least one item"
-                                        )
                                         viewModel.onEvent(CartEvent.OnShowSnackBar("Please select at least one item"))
                                     }
                                 },
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                shape = RoundedCornerShape(0.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer),
+                                shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .width(120.dp)
+                                    .padding(top = 4.dp, end = 4.dp)
                             ) {
                                 Row(
                                     modifier = Modifier.fillMaxSize(),
@@ -284,7 +293,8 @@ fun CartScreen(
                 end = 8.dp
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            state = lazyListState
         ) {
             state.cart?.products?.let { it1 ->
                 items(it1.count()) { index ->
@@ -350,25 +360,38 @@ fun CartScreen(
                     )
                 }
             }
-
             item {
                 val itemSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 11).dp
                 com.google.accompanist.flowlayout.FlowRow(
                     mainAxisSize = SizeMode.Expand,
                     mainAxisAlignment = FlowMainAxisAlignment.SpaceBetween
                 ) {
-                    for (index in 0 until productsData.itemCount) {
-                        ProductCard(
-                            modifier = Modifier
-                                .width(itemSize)
-                                .height(268.dp)
-                                .padding(bottom = 8.dp)
-                                .clickable {
-                                    viewModel.onEvent(CartEvent.OnProductClick(productsData[index]!!.id))
-                                },
-                            product = productsData[index]!!
-                        )
+                    productsData.itemSnapshotList.forEachIndexed { _, it ->
+                        it?.let { it1 ->
+                            ProductCard(
+                                modifier = Modifier
+                                    .width(itemSize)
+                                    .height(268.dp)
+                                    .padding(bottom = 8.dp)
+                                    .clickable {
+                                        viewModel.onEvent(CartEvent.OnProductClick(it.id))
+                                    },
+                                product = it1
+                            )
+                        }
                     }
+//                    for (index in 0 until productsData.itemCount) {
+//                        ProductCard(
+//                            modifier = Modifier
+//                                .width(itemSize)
+//                                .height(268.dp)
+//                                .padding(bottom = 8.dp)
+//                                .clickable {
+//                                    viewModel.onEvent(CartEvent.OnProductClick(productsData[index]!!.id))
+//                                },
+//                            product = productsData[index]!!
+//                        )
+//                    }
                     when (productsData.loadState.append) {
                         is LoadState.NotLoading -> Unit
                         is LoadState.Loading -> {
