@@ -1,5 +1,6 @@
 package com.selegend.ecommercemobile.ui.cart
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -28,6 +30,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
+import com.selegend.ecommercemobile.R
 import com.selegend.ecommercemobile.store.domain.model.core.payment.ProductPayment
 import com.selegend.ecommercemobile.store.domain.model.core.products.Product
 import com.selegend.ecommercemobile.ui.cart.components.ProductCart
@@ -310,7 +313,50 @@ fun CartScreen(
                     )
                 }
             }
-
+            item {
+                if (state.cart?.products?.size == 0) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text(
+                            text = "Your cart is empty",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.cart),
+                            contentDescription = "Cart is empty",
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Button(
+                            onClick = {
+                                viewModel.onEvent(CartEvent.OnBackToHome)
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp, end = 4.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Continue shopping",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+            }
             item {
                 val dividerSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 90).dp
                 Row(

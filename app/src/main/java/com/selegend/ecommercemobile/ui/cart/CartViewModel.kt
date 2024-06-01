@@ -158,6 +158,9 @@ class CartViewModel @Inject constructor(
             is CartEvent.OnShowSnackBar -> {
                 sendEvent(Event.Toast(event.message))
             }
+            is CartEvent.OnBackToHome -> {
+                sendUIEvent(UIEvent.Navigate(Routes.HOME))
+            }
         }
     }
 

@@ -9,6 +9,8 @@ import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.store.domain.repository.UserRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
+import com.selegend.ecommercemobile.utils.Event
+import com.selegend.ecommercemobile.utils.EventBus
 import com.selegend.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -77,7 +79,9 @@ class UserViewModel @Inject constructor(
                 }
                 is UserEvent.OnLogoutClick -> {
                     viewModelScope.launch {
-                        authRepository.deleteAuth(event.auth)
+                        auth?.let { authRepository.deleteAuth(it) }
+                        EventBus.sendEvent(Event.Toast("Logged out successfully"))
+                        sendUIEvent(UIEvent.Navigate(Routes.LOGIN))
                     }
                 }
             }

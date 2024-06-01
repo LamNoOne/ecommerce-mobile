@@ -15,4 +15,6 @@ sealed class CartEvent {
 
     data class OnShowSnackBar(val message: String): CartEvent()
 
+    object OnBackToHome: CartEvent()
+
 }

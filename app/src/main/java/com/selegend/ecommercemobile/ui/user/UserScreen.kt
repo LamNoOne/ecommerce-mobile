@@ -82,12 +82,12 @@ fun UserScreen(
                     selected = false,
                     onClick = { coreViewModel.onEvent(CoreEvent.OnHomeClick) }
                 )
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorite Icon") },
-                    label = { Text("Favorite") },
-                    selected = false,
-                    onClick = { coreViewModel.onEvent(CoreEvent.OnFavoriteClick) }
-                )
+//                BottomNavigationItem(
+//                    icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorite Icon") },
+//                    label = { Text("Favorite") },
+//                    selected = false,
+//                    onClick = { coreViewModel.onEvent(CoreEvent.OnFavoriteClick) }
+//                )
                 BottomNavigationItem(
                     icon = {
                         Icon(
@@ -102,7 +102,7 @@ fun UserScreen(
                 if (authViewModel.auth != null) {
                     BottomNavigationItem(
                         icon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
-                        label = { Text(authViewModel.auth!!.firstName) },
+                        label = { Text("Me") },
                         selected = true,
                         onClick = { coreViewModel.onEvent(CoreEvent.OnProfileClick) }
                     )
@@ -197,16 +197,16 @@ fun UserScreen(
                         thickness = 2.dp,
                         color = MaterialTheme.colorScheme.surfaceContainer
                     )
-                    SettingNavigation(
-                        onClick = { /*TODO*/ },
-                        text = "My Favorite",
-                        imageVector = Icons.Default.Favorite,
-                        imageResource = R.drawable.arrow_right,
-                    )
-                    HorizontalDivider(
-                        thickness = 2.dp,
-                        color = MaterialTheme.colorScheme.surfaceContainer
-                    )
+//                    SettingNavigation(
+//                        onClick = { /*TODO*/ },
+//                        text = "My Favorite",
+//                        imageVector = Icons.Default.Favorite,
+//                        imageResource = R.drawable.arrow_right,
+//                    )
+//                    HorizontalDivider(
+//                        thickness = 2.dp,
+//                        color = MaterialTheme.colorScheme.surfaceContainer
+//                    )
                     SettingNavigation(
                         onClick = { viewModel.onEvent(UserEvent.OnOrderHistoryClick) },
                         text = "Order History",
@@ -223,6 +223,29 @@ fun UserScreen(
                         imageVector = Icons.Default.Settings,
                         imageResource = R.drawable.arrow_right,
                     )
+                    Button(
+                        onClick = {
+                            viewModel.onEvent(UserEvent.OnLogoutClick)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            androidx.compose.material3.Text(
+                                text = "Log out",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Column(

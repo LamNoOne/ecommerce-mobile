@@ -114,6 +114,9 @@ class PaymentViewModel @Inject constructor(
             is PaymentEvent.OnClickContinue -> {
                 sendUIEvent(UIEvent.Navigate(Routes.HOME))
             }
+            is PaymentEvent.OnClickViewOrder -> {
+                sendUIEvent(UIEvent.Navigate("${Routes.ORDER_DETAIL}?transactionId=${event.transactionId}"))
+            }
         }
     }
 

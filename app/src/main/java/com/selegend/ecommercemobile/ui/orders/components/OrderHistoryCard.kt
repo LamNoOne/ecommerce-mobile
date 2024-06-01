@@ -94,10 +94,18 @@ fun OrderHistoryCard(
                     .height(40.dp),
                 shape = RoundedCornerShape(24.dp),
                 border = ButtonDefaults.outlinedButtonBorder,
-                onClick = { onEvent(OrdersEvent.OnOrderClick(orderState.transactionId!!)) })
+                onClick = {
+                    if (orderState.transactionId != null) {
+                        onEvent(
+                            OrdersEvent.OnOrderClick(transactionId = orderState.transactionId)
+                        )
+                    } else {
+                        onEvent(OrdersEvent.OnPaymentClick(orderId = orderState.orderId))
+                    }
+                })
             {
                 Text(
-                    text = "Details",
+                    text = if(orderState.orderStatus == "Paid") "Details" else "Pay",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = Color.Black

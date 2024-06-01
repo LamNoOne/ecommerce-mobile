@@ -188,12 +188,12 @@ fun HomeScreen(
                     selected = true,
                     onClick = { coreViewModel.onEvent(CoreEvent.OnHomeClick) }
                 )
-                BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorite Icon") },
-                    label = { Text("Favorite") },
-                    selected = false,
-                    onClick = { coreViewModel.onEvent(CoreEvent.OnFavoriteClick) }
-                )
+//                BottomNavigationItem(
+//                    icon = { Icon(Icons.Default.Favorite, contentDescription = "Favorite Icon") },
+//                    label = { Text("Favorite") },
+//                    selected = false,
+//                    onClick = { coreViewModel.onEvent(CoreEvent.OnFavoriteClick) }
+//                )
                 BottomNavigationItem(
                     icon = {
                         Icon(
@@ -208,7 +208,7 @@ fun HomeScreen(
                 if (authViewModel.auth != null) {
                     BottomNavigationItem(
                         icon = { Icon(Icons.Default.Person, contentDescription = "Person Icon") },
-                        label = { Text(authViewModel.auth!!.firstName) },
+                        label = { Text("Me") },
                         selected = false,
                         onClick = { coreViewModel.onEvent(CoreEvent.OnProfileClick) }
                     )

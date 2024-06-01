@@ -94,6 +94,9 @@ class OrderViewModel @Inject constructor(
             is OrdersEvent.OnSearchClick -> {
 //                sendUIEvent(UIEvent.Navigate("${Routes.ORDER_DETAIL}?orderId=${event.orderId}"))
             }
+            is OrdersEvent.OnPaymentClick -> {
+                sendUIEvent(UIEvent.Navigate("${Routes.PAYMENT}?orderId=${event.orderId}"))
+            }
         }
     }
 

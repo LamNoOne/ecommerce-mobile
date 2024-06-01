@@ -83,7 +83,7 @@ fun PaymentScreen(
     if (transactionState.success && transactionState.orderId == state.order?.orderId) {
         Log.d("PaymentScreen Transaction ID", transactionState.transactionId.toString())
         isLoading = false
-        SuccessPaymentScreen(onEvent = viewModel::onEvent)
+        SuccessPaymentScreen(onEvent = viewModel::onEvent, transactionId = transactionState.transactionId.toString())
 
     } else {
         Scaffold(
@@ -402,7 +402,7 @@ fun ConfirmDialogOrder(
  */
 
 @Composable
-fun SuccessPaymentScreen(onEvent: (PaymentEvent) -> Unit) {
+fun SuccessPaymentScreen(onEvent: (PaymentEvent) -> Unit, transactionId: String) {
     Column(
         modifier = Modifier
             .testTag("successScreen")
@@ -437,7 +437,7 @@ fun SuccessPaymentScreen(onEvent: (PaymentEvent) -> Unit) {
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onEvent(PaymentEvent.OnClickViewOrder(transactionId)) },
             Modifier
                 .shadow(
                     elevation = 8.dp,

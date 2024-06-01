@@ -210,7 +210,7 @@ class MainActivity : ComponentActivity() {
                                 onPopBackStack = { navController.popBackStack() },
                                 onNavigate = {
                                     navController.navigate(it.route)
-                                }
+                                },
                             )
                         }
                         navigation(
@@ -244,7 +244,12 @@ class MainActivity : ComponentActivity() {
                             AuthScreen(
                                 onPopBackStack = { navController.popBackStack() },
                                 onNavigate = {
-                                    navController.navigate(it.route)
+                                    navController.navigate(it.route) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            inclusive = true
+                                            saveState = false
+                                        }
+                                    }
                                 }
                             )
                         }
