@@ -21,20 +21,23 @@ import com.selegend.ecommercemobile.ui.theme.BlueGray
 
 @Composable
 fun LoginSection(viewModel: AuthViewModel) {
-
-    LoginTextField(
+    AuthTextField(
         label = "Username",
-        trailing = "",
         modifier = Modifier.fillMaxWidth(),
         text = viewModel.username,
+        errorMessage = "Username is required",
+        errorHandler = { it.isEmpty() },
         onValueChange = { viewModel.onEvent(AuthEvent.OnUsernameChange(it)) }
     )
     Spacer(modifier = Modifier.height(15.dp))
-    LoginTextField(
+    PasswordTextField(
         modifier = Modifier.fillMaxWidth(),
         label = "Password",
-        trailing = "Forgot?",
         text = viewModel.password,
+        errorMessage = "Password is required",
+        errorHandler = {
+            it.isEmpty() || it.length < 6
+        },
         onValueChange = { viewModel.onEvent(AuthEvent.OnPasswordChange(it)) },
     )
     Spacer(modifier = Modifier.height(20.dp))
@@ -51,7 +54,7 @@ fun LoginSection(viewModel: AuthViewModel) {
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(36.dp),
+            .height(40.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (isSystemInDarkTheme()) BlueGray else Color.Black,
             contentColor = Color.White

@@ -7,10 +7,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import arrow.core.Either
+import com.selegend.ecommercemobile.store.domain.model.Metadata
 import com.selegend.ecommercemobile.store.domain.model.MetadataAuth
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.model.core.auth.LoginCredentials
+import com.selegend.ecommercemobile.store.domain.model.core.auth.SignupCredentials
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import com.selegend.ecommercemobile.utils.Constants
@@ -34,10 +36,39 @@ class AuthViewModel @Inject constructor(
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    /**
+     * Login state
+     */
+
     var username by mutableStateOf<String>("")
         private set
 
     var password by mutableStateOf<String>("")
+        private set
+
+    /**
+     * Sign up state
+     */
+
+    var lastNameSignup by mutableStateOf<String>("")
+        private set
+
+    var firstNameSignup by mutableStateOf<String>("")
+        private set
+
+    var emailSignup by mutableStateOf<String>("")
+        private set
+
+    var phoneNumber by mutableStateOf<String>("")
+        private set
+
+    var usernameSignup by mutableStateOf<String>("")
+        private set
+
+    var passwordSignup by mutableStateOf<String>("")
+        private set
+
+    var confirmPasswordSignup by mutableStateOf<String>("")
         private set
 
     init {
@@ -52,6 +83,13 @@ class AuthViewModel @Inject constructor(
         return when (val response = repository.signIn(loginCredentials)) {
             is Either.Right -> (response as Either.Right<Response<MetadataAuth>>).value
             else -> Response<MetadataAuth>(500, null, null, MetadataAuth())
+        }
+    }
+
+    private suspend fun signUp(signupCredentials: SignupCredentials): Response<Metadata> {
+        return when (val response = repository.signUp(signupCredentials)) {
+            is Either.Right -> (response as Either.Right<Response<Metadata>>).value
+            else -> Response<Metadata>(500, null, null, Metadata())
         }
     }
 
@@ -126,13 +164,56 @@ class AuthViewModel @Inject constructor(
                 authenticate(LoginCredentials(username, password))
             }
             is AuthEvent.OnSignUpClick -> {
-                /* TODO("Not yet implement") */
+                viewModelScope.launch {
+                    val response = signUp(
+                        SignupCredentials(
+                            firstNameSignup,
+                            lastNameSignup,
+                            emailSignup,
+                            phoneNumber,
+                            usernameSignup,
+                            passwordSignup
+                        )
+                    )
+                    if (response.statusCode == 401 || response.statusCode == 500) {
+                        EventBus.sendEvent(Event.Toast("Can not sign up right row. Please try again!!!"))
+                        return@launch
+                    }
+                    if (response.statusCode == 201) {
+                        EventBus.sendEvent(Event.Toast("Sign up successfully!!!"))
+                        sendUIEvent(UIEvent.Navigate(Routes.LOGIN))
+                    } else {
+                        EventBus.sendEvent(Event.Toast("Can not sign up right row. Please try again!!!"))
+                        return@launch
+                    }
+                }
             }
             is AuthEvent.OnLoginNavigateClick -> {
                 /* TODO("Not yet implement") */
             }
             is AuthEvent.OnSignUpNavigateClick -> {
                 /* TODO("Not yet implement") */
+            }
+            is AuthEvent.OnFirstNameChange -> {
+                firstNameSignup = event.firstName
+            }
+            is AuthEvent.OnLastNameChange -> {
+                lastNameSignup = event.lastName
+            }
+            is AuthEvent.OnEmailChange -> {
+                emailSignup = event.email
+            }
+            is AuthEvent.OnPhoneNumberChange -> {
+                phoneNumber = event.phoneNumber
+            }
+            is AuthEvent.OnUserNameSignupChange -> {
+                usernameSignup = event.username
+            }
+            is AuthEvent.OnPasswordSignupChange -> {
+                passwordSignup = event.password
+            }
+            is AuthEvent.OnConfirmPasswordChange -> {
+                confirmPasswordSignup = event.confirmPassword
             }
         }
     }

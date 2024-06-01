@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.SnackbarDuration
@@ -25,18 +24,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
-import com.selegend.ecommercemobile.helpers.ScrollDirection
-import com.selegend.ecommercemobile.helpers.rememberDirectionalLazyListState
 import com.selegend.ecommercemobile.store.domain.model.core.payment.ProductPayment
 import com.selegend.ecommercemobile.store.domain.model.core.products.Product
 import com.selegend.ecommercemobile.ui.cart.components.ProductCart
-import com.selegend.ecommercemobile.ui.components.ErrorItem
-import com.selegend.ecommercemobile.ui.components.LoadingItem
 import com.selegend.ecommercemobile.ui.home.components.ProductCard
 import com.selegend.ecommercemobile.ui.product_detail.badgeLayout
 import com.selegend.ecommercemobile.ui.utils.UIEvent
@@ -68,6 +62,7 @@ fun CartScreen(
     val productsData: LazyPagingItems<Product> = viewModel.productPager.collectAsLazyPagingItems()
     var checked by remember { mutableStateOf(false) }
     var totalPayment by remember { mutableStateOf(0.0) }
+
     val selectedItem = remember {
         mutableListOf<ProductPayment>()
     }
@@ -86,24 +81,6 @@ fun CartScreen(
 
     fun updateAllChecked(status: Boolean) {
         checked = status
-    }
-
-    val lazyListState = rememberLazyListState()
-    val directionalLazyListState = rememberDirectionalLazyListState(
-        lazyListState
-    )
-
-    val scrollOffset by remember {
-        derivedStateOf { lazyListState.firstVisibleItemScrollOffset
-        }
-    }
-
-
-
-    val color = when (directionalLazyListState.scrollDirection) {
-        ScrollDirection.Up -> Color.Green
-        ScrollDirection.Down -> Color.Blue
-        else -> Color.Black
     }
 
     if (state.isLoading) {
@@ -294,7 +271,6 @@ fun CartScreen(
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp),
-            state = lazyListState
         ) {
             state.cart?.products?.let { it1 ->
                 items(it1.count()) { index ->
@@ -360,46 +336,31 @@ fun CartScreen(
                     )
                 }
             }
-            item {
-                val itemSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 11).dp
+            items(productsData.itemCount) { index ->
                 com.google.accompanist.flowlayout.FlowRow(
                     mainAxisSize = SizeMode.Expand,
                     mainAxisAlignment = FlowMainAxisAlignment.SpaceBetween
                 ) {
-                    productsData.itemSnapshotList.forEachIndexed { _, it ->
-                        it?.let { it1 ->
-                            ProductCard(
-                                modifier = Modifier
-                                    .width(itemSize)
-                                    .height(268.dp)
-                                    .padding(bottom = 8.dp)
-                                    .clickable {
-                                        viewModel.onEvent(CartEvent.OnProductClick(it.id))
-                                    },
-                                product = it1
-                            )
-                        }
-                    }
-//                    for (index in 0 until productsData.itemCount) {
-//                        ProductCard(
-//                            modifier = Modifier
-//                                .width(itemSize)
-//                                .height(268.dp)
-//                                .padding(bottom = 8.dp)
-//                                .clickable {
-//                                    viewModel.onEvent(CartEvent.OnProductClick(productsData[index]!!.id))
-//                                },
-//                            product = productsData[index]!!
-//                        )
-//                    }
-                    when (productsData.loadState.append) {
-                        is LoadState.NotLoading -> Unit
-                        is LoadState.Loading -> {
-                            LoadingItem()
-                        }
-                        is LoadState.Error -> {
-                            ErrorItem(message = (productsData.loadState.append as LoadState.Error).error.message.toString())
-                        }
+                    val itemSize: Dp = (LocalConfiguration.current.screenWidthDp / 2 - 11).dp
+                    ProductCard(
+                        modifier = Modifier
+                            .width(itemSize)
+                            .height(268.dp)
+                            .clickable {
+                                viewModel.onEvent(CartEvent.OnProductClick(productsData[index * 2]!!.id))
+                            },
+                        product = productsData[index * 2]!!,
+                    )
+                    if (index * 2 + 1 < productsData.itemCount) {
+                        ProductCard(
+                            modifier = Modifier
+                                .width(itemSize)
+                                .height(268.dp)
+                                .clickable {
+                                    viewModel.onEvent(CartEvent.OnProductClick(productsData[index * 2 + 1]!!.id))
+                                },
+                            product = productsData[index * 2 + 1]!!,
+                        )
                     }
                 }
             }

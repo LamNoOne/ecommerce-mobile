@@ -5,16 +5,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.selegend.ecommercemobile.ui.auth.components.LoginSection
-import com.selegend.ecommercemobile.ui.auth.components.SignupNavigation
-import com.selegend.ecommercemobile.ui.auth.components.SocialMediaSection
-import com.selegend.ecommercemobile.ui.auth.components.TopSection
+import com.selegend.ecommercemobile.ui.auth.components.*
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import kotlinx.coroutines.launch
 
@@ -26,6 +21,12 @@ fun AuthScreen(
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    var isLogin by remember { mutableStateOf(true) }
+
+    fun toggleLogin() {
+        isLogin = !isLogin
+    }
+
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -49,7 +50,7 @@ fun AuthScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        TopSection()
+        TopSection(isLogin = isLogin)
 
         Spacer(modifier = Modifier.height(26.dp))
 
@@ -58,10 +59,19 @@ fun AuthScreen(
                 .padding(horizontal = 15.dp)
                 .fillMaxSize()
         ) {
-            LoginSection(viewModel = viewModel)
+            if (isLogin) {
+                LoginSection(viewModel = viewModel)
+            } else {
+                SignupSection(viewModel = viewModel)
+            }
             Spacer(modifier = Modifier.height(25.dp))
             SocialMediaSection()
-            SignupNavigation()
+            Spacer(modifier = Modifier.height(25.dp))
+            if (isLogin) {
+                SignupNavigation(toggleLogin = { toggleLogin() })
+            } else {
+                LoginNavigation(toggleLogin = { toggleLogin() })
+            }
         }
     }
 }

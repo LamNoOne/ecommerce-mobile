@@ -1,7 +1,6 @@
 package com.selegend.ecommercemobile.ui.orders.components
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,13 +18,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.selegend.ecommercemobile.store.domain.model.core.orders.OrderHistory
+import com.selegend.ecommercemobile.ui.orders.OrdersEvent
 import java.time.Instant
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun OrderHistoryCard(
     modifier: Modifier = Modifier,
-    orderState: OrderHistory
+    orderState: OrderHistory,
+    onEvent: (OrdersEvent) -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -61,7 +62,7 @@ fun OrderHistoryCard(
                 color = Color.Gray
             )
             Text(
-                text = orderState.transactionId ?: "N/A",
+                text = orderState.transactionId?.uppercase() ?: "N/A",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.DarkGray
@@ -93,7 +94,7 @@ fun OrderHistoryCard(
                     .height(40.dp),
                 shape = RoundedCornerShape(24.dp),
                 border = ButtonDefaults.outlinedButtonBorder,
-                onClick = { Log.d("Order detail", "Clicking...") })
+                onClick = { onEvent(OrdersEvent.OnOrderClick(orderState.transactionId!!)) })
             {
                 Text(
                     text = "Details",

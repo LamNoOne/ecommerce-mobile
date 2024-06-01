@@ -57,7 +57,7 @@ class CartViewModel @Inject constructor(
 
     private val productParams = CartProductParams(
         name = "",
-        limit = 50,
+        limit = 20,
         sortBy = "",
         order = ""
     )

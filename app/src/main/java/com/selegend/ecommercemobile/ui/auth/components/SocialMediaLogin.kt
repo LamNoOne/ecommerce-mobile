@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.selegend.ecommercemobile.ui.theme.BlueGray
-import com.selegend.ecommercemobile.ui.theme.LightBlueWhite
 
 @Composable
 fun SocialMediaLogin(
@@ -41,7 +40,7 @@ fun SocialMediaLogin(
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = text,
-            style = MaterialTheme.typography.labelMedium.copy(color = Color(0xFF64748B))
+            style = MaterialTheme.typography.labelMedium.copy(Color.White)
         )
     }
 }
@@ -55,6 +54,6 @@ fun Modifier.socialMedia(): Modifier = composed {
             shape = RoundedCornerShape(4.dp)
         )
     } else {
-        background(LightBlueWhite)
+        background(Color.Black)
     }
 }

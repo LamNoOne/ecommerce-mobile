@@ -3,10 +3,11 @@ package com.selegend.ecommercemobile.store.data.repository
 import arrow.core.Either
 import com.selegend.ecommercemobile.core.NetworkError
 import com.selegend.ecommercemobile.store.data.mapper.toNetworkError
-import com.selegend.ecommercemobile.store.domain.remote.TransactionApi
 import com.selegend.ecommercemobile.store.domain.model.MetadataMakeTransaction
+import com.selegend.ecommercemobile.store.domain.model.MetadataTransaction
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.transaction.MakeTransaction
+import com.selegend.ecommercemobile.store.domain.remote.TransactionApi
 import com.selegend.ecommercemobile.store.domain.repository.TransactionRepository
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class TransactionRepositoryImpl @Inject constructor(
     override suspend fun getTransaction(
         headers: Map<String, String>,
         transactionId: String
-    ): Either<NetworkError, Response<MetadataMakeTransaction>> {
+    ): Either<NetworkError, Response<MetadataTransaction>> {
         return Either.catch {
             transactionApi.getTransaction(headers, transactionId)
         }.mapLeft {

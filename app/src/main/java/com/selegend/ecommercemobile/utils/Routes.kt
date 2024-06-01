@@ -8,6 +8,8 @@ object Routes {
     const val FAVORITE = "favorite"
     const val WISH_LIST = "wish_list"
     const val ORDER_HISTORY = "order_history"
+    const val ORDERS = "orders"
+    const val ORDER_DETAIL = "order_detail"
     const val PROFILE = "profile"
     const val LOGIN = "login"
     const val REGISTER = "register"

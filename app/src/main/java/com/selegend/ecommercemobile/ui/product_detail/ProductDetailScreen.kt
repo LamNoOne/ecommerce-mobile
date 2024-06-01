@@ -431,9 +431,9 @@ fun ProductDetailScreen(
                                 onValueDecreaseClick = {
                                     valueCounter = maxOf(valueCounter - 1, 1)
                                 },
-                                onValueClearClick = {
-                                    valueCounter = 0
-                                },
+//                                onValueClearClick = {
+//                                    valueCounter = 0
+//                                },
                                 modifier = Modifier
                                     .width(100.dp)
                                     .height(32.dp)

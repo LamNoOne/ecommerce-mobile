@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun SignupNavigation(toggleLogin: () -> Unit) {
+fun LoginNavigation(toggleLogin: () -> Unit) {
     val uiColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     Row(
@@ -26,14 +26,14 @@ fun SignupNavigation(toggleLogin: () -> Unit) {
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Don't have an account?",
+            text = "If you have an account",
             color = Color(0xFF64748B),
             fontSize = MaterialTheme.typography.labelMedium.fontSize,
             fontWeight = FontWeight.Normal
         )
         TextButton(onClick = { toggleLogin() }) {
             Text(
-                text = "Create now",
+                text = "Login now",
                 color = uiColor,
                 fontSize = MaterialTheme.typography.labelMedium.fontSize,
                 fontWeight = FontWeight.Medium

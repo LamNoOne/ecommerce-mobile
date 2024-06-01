@@ -130,26 +130,25 @@ fun OrdersScreen(
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(
-                            onClick = {
-                                onPopBackStack()
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBackIosNew,
-                                contentDescription = "Back"
-                            )
+                    IconButton(
+                        onClick = {
+                            onPopBackStack()
                         }
-                        Text(
-                            text = "My Orders",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "Back"
                         )
                     }
+                    Text(
+                        text = "My Orders",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black
+                    )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = { Log.d("Search clicking...", "") }) {
@@ -220,7 +219,8 @@ fun OrdersScreen(
                                     shape = RoundedCornerShape(size = 8.dp)
                                 )
                                 .padding(16.dp),
-                            orderState = tabItems[index].orders[indexCount]!!
+                            orderState = tabItems[index].orders[indexCount]!!,
+                            onEvent = viewModel::onEvent
                         )
                     }
                 }

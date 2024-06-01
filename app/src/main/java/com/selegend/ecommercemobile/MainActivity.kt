@@ -1,11 +1,13 @@
 package com.selegend.ecommercemobile
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,6 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -34,6 +37,7 @@ import com.selegend.ecommercemobile.ui.cart.CartScreen
 import com.selegend.ecommercemobile.ui.checkout.CheckoutScreen
 import com.selegend.ecommercemobile.ui.favorite.FavoriteScreen
 import com.selegend.ecommercemobile.ui.home.screens.HomeScreen
+import com.selegend.ecommercemobile.ui.order_detail.OrderDetailScreen
 import com.selegend.ecommercemobile.ui.orders.OrdersScreen
 import com.selegend.ecommercemobile.ui.payment.PaymentScreen
 import com.selegend.ecommercemobile.ui.payment.PaymentUiState
@@ -75,6 +79,7 @@ class MainActivity : ComponentActivity() {
 
     private val model: PaymentViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -208,13 +213,32 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-                        composable(Routes.ORDER_HISTORY) {
-                            OrdersScreen(
-                                onPopBackStack = { navController.popBackStack() },
-                                onNavigate = {
-                                    navController.navigate(it.route)
-                                }
-                            )
+                        navigation(
+                            startDestination = Routes.ORDERS,
+                            route = Routes.ORDER_HISTORY
+                        ) {
+                            composable(Routes.ORDERS) {
+                                OrdersScreen(
+                                    onPopBackStack = { navController.popBackStack() },
+                                    onNavigate = {
+                                        navController.navigate(it.route)
+                                    }
+                                )
+                            }
+                            composable(
+                                route = "${Routes.ORDER_DETAIL}?transactionId={transactionId}",
+                                arguments = listOf(
+                                    navArgument("transactionId") {
+                                        type = NavType.StringType
+                                    }
+                                )) {
+                                OrderDetailScreen(
+                                    onPopBackStack = { navController.popBackStack() },
+                                    onNavigate = {
+                                        navController.navigate(it.route)
+                                    }
+                                )
+                            }
                         }
                         composable(Routes.LOGIN) {
                             AuthScreen(

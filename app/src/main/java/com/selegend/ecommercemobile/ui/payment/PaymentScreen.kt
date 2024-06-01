@@ -15,12 +15,10 @@ import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -29,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.samples.pay.util.PaymentsUtil
@@ -37,6 +36,7 @@ import com.google.pay.button.ButtonType
 import com.google.pay.button.PayButton
 import com.selegend.ecommercemobile.R
 import com.selegend.ecommercemobile.ui.checkout.components.CheckoutProduct
+import com.selegend.ecommercemobile.ui.components.LoadingItem
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import kotlinx.coroutines.launch
 
@@ -55,6 +55,7 @@ fun PaymentScreen(
     setOrderId(state.order?.orderId ?: 0)
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    var isLoading by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -75,78 +76,14 @@ fun PaymentScreen(
     }
     Log.d("PaymentScreen", "c: $payUiState")
 
+    if(isLoading) {
+        LoadingItem(modifier = Modifier.zIndex(1f).background(Color.White.copy(alpha = 0.3f)).fillMaxSize())
+    }
+
     if (transactionState.success && transactionState.orderId == state.order?.orderId) {
         Log.d("PaymentScreen Transaction ID", transactionState.transactionId.toString())
-        Column(
-            modifier = Modifier
-                .testTag("successScreen")
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .padding(16.dp)
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Image(
-                contentDescription = null,
-                painter = painterResource(R.drawable.check_circle),
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(200.dp)
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = "You completed a payment.\nWe are preparing your order.",
-                fontSize = 17.sp,
-                color = Color.DarkGray,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Button(
-                onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                modifier = Modifier.height(60.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "VIEW ORDER",
-                        fontSize = 17.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "OR",
-                fontSize = 17.sp,
-                color = Color.DarkGray,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Button(
-                onClick = { viewModel.onEvent(PaymentEvent.OnClickContinue) },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                modifier = Modifier.height(60.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "CONTINUE SHOPPING",
-                        fontSize = 17.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-        }
+        isLoading = false
+        SuccessPaymentScreen(onEvent = viewModel::onEvent)
 
     } else {
         Scaffold(
@@ -221,7 +158,10 @@ fun PaymentScreen(
                                     .testTag("payButton")
                                     .fillMaxSize()
                                     .padding(bottom = 6.dp),
-                                onClick = onGooglePayButtonClick,
+                                onClick = {
+                                    isLoading = true
+                                    onGooglePayButtonClick()
+                                },
                                 allowedPaymentMethods = PaymentsUtil.allowedPaymentMethods.toString(),
                                 radius = 0.dp,
                                 type = ButtonType.Pay,
@@ -460,3 +400,101 @@ fun ConfirmDialogOrder(
  * and pass only it to the composable function,
  * when user click on the button, call that function
  */
+
+@Composable
+fun SuccessPaymentScreen(onEvent: (PaymentEvent) -> Unit) {
+    Column(
+        modifier = Modifier
+            .testTag("successScreen")
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .padding(16.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            contentDescription = null,
+            painter = painterResource(R.drawable.bags),
+            modifier = Modifier
+                .width(200.dp)
+                .height(200.dp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "Success!",
+            fontSize = 34.sp,
+            color = Color.DarkGray,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Medium
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "You completed a payment." +
+                    "\nWe are preparing your order.",
+            fontSize = 17.sp,
+            color = Color.DarkGray,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(
+            onClick = { /*TODO*/ },
+            Modifier
+                .shadow(
+                    elevation = 8.dp,
+                    spotColor = Color(0x40D32626),
+                    ambientColor = Color(0x40D32626)
+                )
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDB3022)),
+            shape = RoundedCornerShape(size = 25.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "VIEW ORDER",
+                    fontSize = 14.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 24.sp
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = "OR",
+            fontSize = 14.sp,
+            color = Color.DarkGray,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Button(
+            onClick = { onEvent(PaymentEvent.OnClickContinue) },
+            modifier = Modifier
+                .shadow(
+                    elevation = 8.dp,
+                    spotColor = Color(0x40D32626),
+                    ambientColor = Color(0x40D32626)
+                )
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDB3022)),
+            shape = RoundedCornerShape(size = 25.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CONTINUE SHOPPING",
+                    fontSize = 14.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 24.sp
+                )
+            }
+        }
+    }
+}

@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
@@ -16,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -37,23 +42,12 @@ fun ProductCart(
     productCart: ProductPayment
 ) {
 
-    var valueCounter by remember {
-        mutableStateOf(productCart.quantity)
-    }
 
-    fun updateValueCounter(value: Int) {
-        valueCounter = value
-    }
-
-    ConfirmDialog(
-        onPopBackStack = onPopBackStack,
-        onEvent = onEvent,
-        changeQuantity = {
-            updateValueCounter(it)
-        },
-        productId = productCart.product.id,
-        quantity = valueCounter
-    )
+//    ConfirmDialog(
+//        onEvent = onEvent,
+//        productId = productCart.product.id,
+//        quantity = productCart.quantity
+//    )
 
     Row(
         modifier = Modifier
@@ -83,20 +77,36 @@ fun ProductCart(
             contentDescription = null,
             modifier = Modifier
                 .height(240.dp)
-                .padding(6.dp)
+                .padding(12.dp)
                 .aspectRatio(1f),
             contentScale = ContentScale.FillBounds
         )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 6.dp, bottom = 6.dp, end = 12.dp),
+                .padding(top = 6.dp, bottom = 6.dp, end = 12.dp, start = 12.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = productCart.product.name,
-                style = MaterialTheme.typography.titleSmall
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = productCart.product.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.width(168.dp)
+                )
+                IconButton(modifier = Modifier.weight(1f), onClick = {
+                    onEvent(
+                        CartEvent.OnCartProductDelete(productCart.product.id)
+                    )
+                }) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete product")
+                }
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,28 +133,28 @@ fun ProductCart(
                     )
                 }
                 CounterButton(
-                    value = valueCounter.toString(),
+                    value = productCart.quantity.toString(),
                     onValueIncreaseClick = {
-                        valueCounter = minOf(valueCounter + 1, 99)
                         onEvent(
                             CartEvent.OnChangeProductQuantity(
                                 productCart.product.id,
-                                valueCounter
+                                productCart.quantity + 1
                             )
                         )
                     },
                     onValueDecreaseClick = {
-                        valueCounter = maxOf(valueCounter - 1, 0)
-                        onEvent(
-                            CartEvent.OnChangeProductQuantity(
-                                productCart.product.id,
-                                valueCounter
+                        if (productCart.quantity > 1) {
+                            onEvent(
+                                CartEvent.OnChangeProductQuantity(
+                                    productCart.product.id,
+                                    productCart.quantity - 1
+                                )
                             )
-                        )
+                        }
                     },
-                    onValueClearClick = {
-                        valueCounter = 0
-                    },
+//                    onValueClearClick = {
+//                        valueCounter = 0
+//                    },
                     modifier = Modifier
                         .width(80.dp)
                         .height(32.dp)
@@ -156,8 +166,6 @@ fun ProductCart(
 
 @Composable
 private fun ConfirmDialog(
-    onPopBackStack: () -> Unit,
-    changeQuantity: (Int) -> Unit,
     onEvent: (CartEvent) -> Unit,
     productId: Int,
     quantity: Int
@@ -179,7 +187,6 @@ private fun ConfirmDialog(
             dismissButton = {
                 TextButton(onClick = {
                     showDialog = false
-                    changeQuantity(1)
                 }) {
                     androidx.compose.material3.Text(
                         text = "Cancel",

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +24,7 @@ private const val CONTAINER_BACKGROUND_ALPHA_INITIAL = 0.6f
 fun ButtonContainer(
     onValueDecreaseClick: () -> Unit,
     onValueIncreaseClick: () -> Unit,
-    onValueClearClick: () -> Unit,
+//    onValueClearClick: () -> Unit,
     modifier: Modifier = Modifier,
     clearButtonVisible: Boolean = false,
 ) {
@@ -48,15 +47,15 @@ fun ButtonContainer(
         )
 
         // clear button
-        if (clearButtonVisible) {
-            IconControlButton(
-                icon = Icons.Outlined.Clear,
-                contentDescription = "Clear count",
-                onClick = onValueClearClick,
-                tintColor = Color.Black.copy(alpha = ICON_BUTTON_ALPHA_INITIAL),
-                modifier = Modifier.border(width = 1.dp, Color.LightGray, RoundedCornerShape(4.dp))
-            )
-        }
+//        if (clearButtonVisible) {
+//            IconControlButton(
+//                icon = Icons.Outlined.Clear,
+//                contentDescription = "Clear count",
+//                onClick = onValueClearClick,
+//                tintColor = Color.Black.copy(alpha = ICON_BUTTON_ALPHA_INITIAL),
+//                modifier = Modifier.border(width = 1.dp, Color.LightGray, RoundedCornerShape(4.dp))
+//            )
+//        }
 
         // increase button
         IconControlButton(

@@ -3,12 +3,14 @@ package com.selegend.ecommercemobile.store.data.repository
 import arrow.core.Either
 import com.selegend.ecommercemobile.core.NetworkError
 import com.selegend.ecommercemobile.store.data.mapper.toNetworkError
-import com.selegend.ecommercemobile.store.domain.remote.AuthApi
-import com.selegend.ecommercemobile.store.domain.remote.AuthDao
+import com.selegend.ecommercemobile.store.domain.model.Metadata
 import com.selegend.ecommercemobile.store.domain.model.MetadataAuth
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.model.core.auth.LoginCredentials
+import com.selegend.ecommercemobile.store.domain.model.core.auth.SignupCredentials
+import com.selegend.ecommercemobile.store.domain.remote.AuthApi
+import com.selegend.ecommercemobile.store.domain.remote.AuthDao
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import javax.inject.Inject
 
@@ -33,6 +35,12 @@ class AuthRepositoryImpl @Inject constructor(
     ): Either<NetworkError, Response<MetadataAuth>> {
         return Either.catch {
             authApi.signIn(loginCredentials)
+        }.mapLeft { it.toNetworkError() }
+    }
+
+    override suspend fun signUp(signupCredentials: SignupCredentials): Either<NetworkError, Response<Metadata>> {
+        return Either.catch {
+            authApi.signUp(signupCredentials)
         }.mapLeft { it.toNetworkError() }
     }
 }

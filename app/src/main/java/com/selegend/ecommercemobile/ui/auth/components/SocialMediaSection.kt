@@ -19,20 +19,15 @@ fun SocialMediaSection() {
         )
         Spacer(modifier = androidx.compose.ui.Modifier.height(20.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             SocialMediaLogin(
                 modifier = Modifier.weight(1f),
                 icon = R.drawable.google,
                 text = "Google",
-                onClick = {}
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            SocialMediaLogin(
-                modifier = Modifier.weight(1f),
-                icon = R.drawable.facebook,
-                text = "Facebook",
                 onClick = {}
             )
         }

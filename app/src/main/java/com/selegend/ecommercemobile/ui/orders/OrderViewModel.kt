@@ -12,6 +12,7 @@ import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.store.domain.repository.CheckoutRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
+import com.selegend.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,7 +89,7 @@ class OrderViewModel @Inject constructor(
     fun onEvent(event: OrdersEvent) {
         when (event) {
             is OrdersEvent.OnOrderClick -> {
-//                sendUIEvent(UIEvent.Navigate("${Routes.ORDER_DETAIL}?orderId=${event.orderId}"))
+                sendUIEvent(UIEvent.Navigate("${Routes.ORDER_DETAIL}?transactionId=${event.transactionId}"))
             }
             is OrdersEvent.OnSearchClick -> {
 //                sendUIEvent(UIEvent.Navigate("${Routes.ORDER_DETAIL}?orderId=${event.orderId}"))

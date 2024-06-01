@@ -32,7 +32,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.selegend.ecommercemobile.R
 import com.selegend.ecommercemobile.ui.auth.AuthViewModel
-import com.selegend.ecommercemobile.ui.cart.CartViewModel
 import com.selegend.ecommercemobile.ui.home.events.CoreEvent
 import com.selegend.ecommercemobile.ui.home.viewmodels.CoreViewModel
 import com.selegend.ecommercemobile.ui.user.components.SettingNavigation
@@ -44,10 +43,10 @@ fun UserScreen(
     onPopBackStack: () -> Unit,
     onNavigate: (UIEvent.Navigate) -> Unit,
     viewModel: UserViewModel = hiltViewModel(),
-    cartViewModel: CartViewModel = hiltViewModel(),
     coreViewModel: CoreViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
         merge(viewModel.uiEvent, coreViewModel.uiEvent).collect { event ->
@@ -64,8 +63,6 @@ fun UserScreen(
             }
         }
     }
-
-    val cartState by cartViewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -153,7 +150,7 @@ fun UserScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Tran Nguyen Dac Lam",
+                            text = "${state.user?.firstName} ${state.user?.lastName}",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -165,7 +162,7 @@ fun UserScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "trannguyendaclam@gmail.com",
+                                text = "${state.user?.email}",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Gray,
@@ -191,7 +188,7 @@ fun UserScreen(
                         color = MaterialTheme.colorScheme.surfaceContainer
                     )
                     SettingNavigation(
-                        onClick = { /*TODO*/ },
+                        onClick = { viewModel.onEvent(UserEvent.OnCartClick) },
                         text = "My Cart",
                         imageVector = Icons.Default.ShoppingCart,
                         imageResource = R.drawable.arrow_right,

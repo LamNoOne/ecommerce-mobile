@@ -11,7 +11,7 @@ fun CounterButton(
     value: String,
     onValueDecreaseClick: () -> Unit,
     onValueIncreaseClick: () -> Unit,
-    onValueClearClick: () -> Unit,
+//    onValueClearClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -22,7 +22,7 @@ fun CounterButton(
         ButtonContainer(
             onValueDecreaseClick = onValueDecreaseClick,
             onValueIncreaseClick = onValueIncreaseClick,
-            onValueClearClick = onValueClearClick,
+//            onValueClearClick = onValueClearClick,
             modifier = Modifier
         )
 

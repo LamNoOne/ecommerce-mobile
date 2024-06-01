@@ -1,6 +1,7 @@
 package com.selegend.ecommercemobile.store.domain.remote
 
 import com.selegend.ecommercemobile.store.domain.model.MetadataMakeTransaction
+import com.selegend.ecommercemobile.store.domain.model.MetadataTransaction
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.transaction.MakeTransaction
 import retrofit2.http.*
@@ -17,5 +18,5 @@ interface TransactionApi {
     suspend fun getTransaction(
         @HeaderMap headers: Map<String, String>,
         @Query("transactionId") transactionId: String
-    ): Response<MetadataMakeTransaction>
+    ): Response<MetadataTransaction>
 }

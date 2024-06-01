@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.selegend.ecommercemobile.R
 
 @Composable
-fun TopSection() {
+fun TopSection(isLogin: Boolean) {
     val uiColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     Box(contentAlignment = Alignment.TopCenter) {
@@ -35,7 +35,7 @@ fun TopSection() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                modifier = androidx.compose.ui.Modifier.size(42.dp),
+                modifier = androidx.compose.ui.Modifier.size(50.dp),
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = stringResource(
                     id = R.string.app_logo
@@ -45,25 +45,18 @@ fun TopSection() {
 
             Spacer(modifier = Modifier.width(15.dp))
 
-            Column {
-                Text(
-                    text = stringResource(id = R.string.the_tolet),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = uiColor
-                )
-                Text(
-                    text = stringResource(id = R.string.find_house),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = uiColor
-                )
-            }
+            Text(
+                text = "Mobile Store",
+                style = MaterialTheme.typography.headlineMedium,
+                color = uiColor
+            )
         }
 
         Text(
             modifier = Modifier
                 .padding(bottom = 10.dp)
                 .align(alignment = Alignment.BottomCenter),
-            text = stringResource(id = R.string.login),
+            text = if (isLogin) "Login" else "Sign Up",
             style = MaterialTheme.typography.headlineLarge,
             color = uiColor
         )
