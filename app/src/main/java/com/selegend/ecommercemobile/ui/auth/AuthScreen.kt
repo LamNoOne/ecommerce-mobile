@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.selegend.ecommercemobile.store.domain.model.core.auth.OauthCredentials
 import com.selegend.ecommercemobile.ui.auth.components.*
 import com.selegend.ecommercemobile.ui.utils.UIEvent
+import com.selegend.ecommercemobile.utils.Constants
 import com.stevdzasan.onetap.OneTapSignInWithGoogle
 import com.stevdzasan.onetap.getUserFromTokenId
 import com.stevdzasan.onetap.rememberOneTapSignInState
@@ -32,10 +33,9 @@ fun AuthScreen(
 
     OneTapSignInWithGoogle(
         state = oneTapSignInState,
-        clientId = "747981782045-uh3ji4ipap10gnjimsamh2v18gd4ms5k.apps.googleusercontent.com",
+        clientId = Constants.GOOGLE_CLIENT_ID,
         onTokenIdReceived = { tokenId ->
             authenticated.value = true
-            Log.d("OneTapSignIn", "Token ID received: $tokenId")
             val authResponse = getUserFromTokenId(tokenId)
             if (authResponse != null) {
                 val (sub, email, emailVerified, fullName, givenName, familyName, picture, issuedAt, expirationTime, locale) = authResponse
