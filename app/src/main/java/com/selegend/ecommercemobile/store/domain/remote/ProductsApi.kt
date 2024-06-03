@@ -9,6 +9,7 @@ import retrofit2.http.Query
 
 interface ProductsApi {
 
+    // Call api theo categoryId
     @GET("products")
     suspend fun getProducts(
         @Query("name") name: String?,
@@ -19,6 +20,7 @@ interface ProductsApi {
         @Query("order") order: String?
     ): Response<MetadataProducts>
 
+    // Call api theo name
     @GET("products")
     suspend fun searchProduct(
         @Query("name") name: String?,

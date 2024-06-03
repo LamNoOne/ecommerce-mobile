@@ -12,6 +12,7 @@ import com.selegend.ecommercemobile.store.domain.model.MetadataAuth
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.model.core.auth.LoginCredentials
+import com.selegend.ecommercemobile.store.domain.model.core.auth.OauthCredentials
 import com.selegend.ecommercemobile.store.domain.model.core.auth.SignupCredentials
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
@@ -93,6 +94,13 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private suspend fun oAuthenticate(oauthCredentials: OauthCredentials): Response<MetadataAuth> {
+        return when (val response = repository.oAuthenticate(oauthCredentials)) {
+            is Either.Right -> (response as Either.Right<Response<MetadataAuth>>).value
+            else -> Response<MetadataAuth>(500, null, null, MetadataAuth())
+        }
+    }
+
     /**
      * Call signIn
      * Check statusCode = 401 || 500 -> EventBus.sendEvent(Event.Toast("Can not sign in right row. Please try again!!!"))
@@ -112,8 +120,9 @@ class AuthViewModel @Inject constructor(
             val auth = response.metadata.user?.let {
                 response.metadata.accessToken?.let { it1 ->
                     response.metadata.refreshToken?.let { it2 ->
+                        Log.d("AuthViewModel", "authenticate: ${response.metadata.user}")
                         val (
-                            userId,
+                            id,
                             lastName,
                             firstName,
                             username,
@@ -123,7 +132,7 @@ class AuthViewModel @Inject constructor(
                             address
                         ) = response.metadata.user
                         Auth(
-                            userId = userId,
+                            userId = id,
                             lastName = lastName,
                             firstName = firstName,
                             username = username,
@@ -139,9 +148,52 @@ class AuthViewModel @Inject constructor(
                 }
             }
             if (auth == null) {
+                EventBus.sendEvent(Event.Toast("Wrong username or password. Please try again!!!"))
+                return@launch
+            }
+            repository.insertAuth(auth)
+            EventBus.sendEvent(Event.Toast("Sign in successfully!!!"))
+            sendUIEvent(UIEvent.Navigate(Routes.HOME))
+        }
+    }
+
+    private fun openAuthenticate(oauthCredentials: OauthCredentials) {
+        viewModelScope.launch {
+            val response = oAuthenticate(oauthCredentials)
+            Log.d("AuthViewModel", "authenticate: $response")
+            if (response.statusCode == 401 || response.statusCode == 500) {
                 EventBus.sendEvent(Event.Toast("Can not sign in right row. Please try again!!!"))
                 return@launch
             }
+            val (
+                id,
+                lastName,
+                firstName,
+                username,
+                image,
+                phoneNumber,
+                email,
+                address
+            ) = response.metadata.user!!
+
+            val accessToken = response.metadata.accessToken!!
+            val refreshToken = response.metadata.refreshToken!!
+
+            val auth = Auth(
+                userId = id,
+                lastName = lastName,
+                firstName = firstName,
+                username = username,
+                image = image,
+                phoneNumber = phoneNumber,
+                email = email,
+                address = address,
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+                id = Constants.TOKEN_UID
+            )
+
+            Log.d("AuthViewModel", "authenticate: $auth")
             repository.insertAuth(auth)
             EventBus.sendEvent(Event.Toast("Sign in successfully!!!"))
             sendUIEvent(UIEvent.Navigate(Routes.HOME))
@@ -214,6 +266,9 @@ class AuthViewModel @Inject constructor(
             }
             is AuthEvent.OnConfirmPasswordChange -> {
                 confirmPasswordSignup = event.confirmPassword
+            }
+            is AuthEvent.OnOauthClick -> {
+                openAuthenticate(event.oauthCredentials)
             }
         }
     }

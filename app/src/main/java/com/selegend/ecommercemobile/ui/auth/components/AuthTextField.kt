@@ -57,7 +57,8 @@ fun AuthTextField(
                 )
             }
         },
-        isError = isError && isKeyboardOpen == Keyboard.Closed
+        isError = isError && isKeyboardOpen == Keyboard.Closed,
+        singleLine = true
     )
 }
 
@@ -123,6 +124,7 @@ fun PasswordTextField(
                 )
             }
         },
-        isError = isError && isKeyboardOpen == Keyboard.Closed
+        isError = isError && isKeyboardOpen == Keyboard.Closed,
+        singleLine = true
     )
 }

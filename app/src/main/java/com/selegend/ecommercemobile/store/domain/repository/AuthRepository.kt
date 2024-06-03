@@ -7,6 +7,7 @@ import com.selegend.ecommercemobile.store.domain.model.MetadataAuth
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.model.core.auth.LoginCredentials
+import com.selegend.ecommercemobile.store.domain.model.core.auth.OauthCredentials
 import com.selegend.ecommercemobile.store.domain.model.core.auth.SignupCredentials
 
 /**
@@ -18,8 +19,11 @@ interface AuthRepository {
     suspend fun deleteAuth(auth: Auth)
 
     suspend fun getAuth(id: Int): Auth?
+    /// No yet =. Room DB
 
     suspend fun signIn(loginCredentials: LoginCredentials): Either<NetworkError, Response<MetadataAuth>>
 
     suspend fun signUp(signupCredentials: SignupCredentials): Either<NetworkError, Response<Metadata>>
+
+    suspend fun oAuthenticate(oauthCredentials: OauthCredentials): Either<NetworkError, Response<MetadataAuth>>
 }

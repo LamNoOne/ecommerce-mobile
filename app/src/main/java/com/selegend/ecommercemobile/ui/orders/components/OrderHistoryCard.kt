@@ -105,7 +105,7 @@ fun OrderHistoryCard(
                 })
             {
                 Text(
-                    text = if(orderState.orderStatus == "Paid") "Details" else "Pay",
+                    text = if(orderState.orderStatus == "Pending") "Pay" else "Details",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = Color.Black

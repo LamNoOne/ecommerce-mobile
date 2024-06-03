@@ -10,10 +10,10 @@ data class Auth(
     val lastName: String,
     val firstName: String,
     val username: String?,
-    val image: String?,
-    val phoneNumber: String?,
+    val image: String ? = null,
+    val phoneNumber: String ? = null,
     val email: String,
-    val address: String,
+    val address: String ? = null,
     val accessToken: String,
     val refreshToken: String,
     @PrimaryKey val id: Int = Constants.TOKEN_UID

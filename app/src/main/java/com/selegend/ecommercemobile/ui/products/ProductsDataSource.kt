@@ -13,6 +13,7 @@ class ProductsDataSource(
     private val productsRepository: ProductsRepository,
     private val productParams: ProductParams
 ) : PagingSource<Int, Product>() {
+    // getRefreshKey is used to determine the key for the next page to be loaded.
     override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)

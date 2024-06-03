@@ -1,7 +1,6 @@
 package com.selegend.ecommercemobile.ui.payment
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -310,31 +309,31 @@ fun PaymentScreen(
                                 )
                             }
                         }
-                        HorizontalDivider(
-                            modifier = Modifier.height(24.dp)
-                        )
-                        Button(
-                            onClick = { /*TODO*/ },
-                            shape = RoundedCornerShape(0.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent
-                            ),
-                            border = BorderStroke(1.dp, Color.DarkGray),
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "Confirm cancel",
-                                    color = Color.DarkGray,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Normal
-                                )
-                            }
-                        }
+//                        HorizontalDivider(
+//                            modifier = Modifier.height(24.dp)
+//                        )
+//                        Button(
+//                            onClick = { /*TODO*/ },
+//                            shape = RoundedCornerShape(0.dp),
+//                            colors = ButtonDefaults.buttonColors(
+//                                containerColor = Color.Transparent
+//                            ),
+//                            border = BorderStroke(1.dp, Color.DarkGray),
+//                            modifier = Modifier.padding(horizontal = 16.dp)
+//                        ) {
+//                            Row(
+//                                modifier = Modifier.fillMaxSize(),
+//                                verticalAlignment = Alignment.CenterVertically,
+//                                horizontalArrangement = Arrangement.Center
+//                            ) {
+//                                Text(
+//                                    text = "Confirm cancel",
+//                                    color = Color.DarkGray,
+//                                    fontSize = 14.sp,
+//                                    fontWeight = FontWeight.Normal
+//                                )
+//                            }
+//                        }
                     }
                 }
             }

@@ -23,7 +23,6 @@ class ProductsViewModel @Inject constructor(
     private val productsRepository: ProductsRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
@@ -39,6 +38,8 @@ class ProductsViewModel @Inject constructor(
         sortBy = sortBy,
         order = order
     )
+
+    // paging 3 => pagination
 
     var productPager = Pager(PagingConfig(pageSize = 20)) {
         ProductsDataSource(productsRepository, productParams)
