@@ -8,7 +8,6 @@ import com.selegend.ecommercemobile.store.domain.model.MetadataAuth
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.model.core.auth.LoginCredentials
-import com.selegend.ecommercemobile.store.domain.model.core.auth.OauthCredentials
 import com.selegend.ecommercemobile.store.domain.model.core.auth.SignupCredentials
 import com.selegend.ecommercemobile.store.domain.remote.AuthApi
 import com.selegend.ecommercemobile.store.domain.remote.AuthDao
@@ -47,9 +46,9 @@ class AuthRepositoryImpl @Inject constructor(
         }.mapLeft { it.toNetworkError() }
     }
 
-    override suspend fun oAuthenticate(oauthCredentials: OauthCredentials): Either<NetworkError, Response<MetadataAuth>> {
+    override suspend fun oAuthenticate(oauthTokenId: String): Either<NetworkError, Response<MetadataAuth>> {
         return Either.catch {
-            authApi.oAuthenticate(oauthCredentials)
+            authApi.oAuthenticate(oauthTokenId)
         }.mapLeft { it.toNetworkError() }
     }
 }

@@ -10,12 +10,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.selegend.ecommercemobile.store.domain.model.core.auth.OauthCredentials
 import com.selegend.ecommercemobile.ui.auth.components.*
 import com.selegend.ecommercemobile.ui.utils.UIEvent
 import com.selegend.ecommercemobile.utils.Constants
 import com.stevdzasan.onetap.OneTapSignInWithGoogle
-import com.stevdzasan.onetap.getUserFromTokenId
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import kotlinx.coroutines.launch
 
@@ -36,19 +34,8 @@ fun AuthScreen(
         clientId = Constants.GOOGLE_CLIENT_ID,
         onTokenIdReceived = { tokenId ->
             authenticated.value = true
-            val authResponse = getUserFromTokenId(tokenId)
-            if (authResponse != null) {
-                val (sub, email, emailVerified, fullName, givenName, familyName, picture, issuedAt, expirationTime, locale) = authResponse
-                val authData = OauthCredentials(
-                    oauthId = sub!!,
-                    email = email!!,
-                    firstName = givenName!!,
-                    lastName = familyName!!,
-                    imageUrl = picture!!,
-                    username = email
-                )
-                viewModel.onEvent(AuthEvent.OnOauthClick(authData))
-            }
+            Log.d("OneTapSignIn", "Token ID received: $tokenId")
+            viewModel.onEvent(AuthEvent.OnOauthClick(tokenId))
         },
         onDialogDismissed = { message ->
             Log.d("OneTapSignIn", "Dialog dismissed: $message")

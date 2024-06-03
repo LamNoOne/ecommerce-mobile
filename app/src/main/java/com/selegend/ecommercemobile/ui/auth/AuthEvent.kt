@@ -1,7 +1,6 @@
 package com.selegend.ecommercemobile.ui.auth
 
 import com.selegend.ecommercemobile.store.domain.model.core.auth.LoginCredentials
-import com.selegend.ecommercemobile.store.domain.model.core.auth.OauthCredentials
 
 sealed class AuthEvent {
     // HAndle event
@@ -18,5 +17,5 @@ sealed class AuthEvent {
     data class OnUserNameSignupChange(val username: String) : AuthEvent()
     data class OnPasswordSignupChange(val password: String) : AuthEvent()
     data class OnConfirmPasswordChange(val confirmPassword: String) : AuthEvent()
-    data class OnOauthClick(val oauthCredentials: OauthCredentials) : AuthEvent()
+    data class OnOauthClick(val oauthTokenId: String) : AuthEvent()
 }

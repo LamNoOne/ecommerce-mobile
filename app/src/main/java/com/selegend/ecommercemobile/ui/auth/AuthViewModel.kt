@@ -12,7 +12,6 @@ import com.selegend.ecommercemobile.store.domain.model.MetadataAuth
 import com.selegend.ecommercemobile.store.domain.model.Response
 import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.model.core.auth.LoginCredentials
-import com.selegend.ecommercemobile.store.domain.model.core.auth.OauthCredentials
 import com.selegend.ecommercemobile.store.domain.model.core.auth.SignupCredentials
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
@@ -94,8 +93,8 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private suspend fun oAuthenticate(oauthCredentials: OauthCredentials): Response<MetadataAuth> {
-        return when (val response = repository.oAuthenticate(oauthCredentials)) {
+    private suspend fun oAuthenticate(oauthTokenId: String): Response<MetadataAuth> {
+        return when (val response = repository.oAuthenticate(oauthTokenId)) {
             is Either.Right -> (response as Either.Right<Response<MetadataAuth>>).value
             else -> Response<MetadataAuth>(500, null, null, MetadataAuth())
         }
@@ -157,9 +156,9 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun openAuthenticate(oauthCredentials: OauthCredentials) {
+    private fun openAuthenticate(oauthTokenId: String) {
         viewModelScope.launch {
-            val response = oAuthenticate(oauthCredentials)
+            val response = oAuthenticate(oauthTokenId)
             Log.d("AuthViewModel", "authenticate: $response")
             if (response.statusCode == 401 || response.statusCode == 500) {
                 EventBus.sendEvent(Event.Toast("Can not sign in right row. Please try again!!!"))
@@ -268,7 +267,7 @@ class AuthViewModel @Inject constructor(
                 confirmPasswordSignup = event.confirmPassword
             }
             is AuthEvent.OnOauthClick -> {
-                openAuthenticate(event.oauthCredentials)
+                openAuthenticate(event.oauthTokenId)
             }
         }
     }

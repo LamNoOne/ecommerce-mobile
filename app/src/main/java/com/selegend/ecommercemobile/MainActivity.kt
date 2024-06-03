@@ -205,13 +205,18 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.FAVORITE) {
                             FavoriteScreen()
                         }
-                        composable(Routes.USER) {
-                            UserScreen(
-                                onPopBackStack = { navController.popBackStack() },
-                                onNavigate = {
-                                    navController.navigate(it.route)
-                                },
-                            )
+                        navigation(
+                            startDestination = Routes.MANAGE_USER,
+                            route = Routes.USER
+                        ) {
+                            composable(Routes.MANAGE_USER) {
+                                UserScreen(
+                                    onPopBackStack = { navController.popBackStack() },
+                                    onNavigate = {
+                                        navController.navigate(it.route)
+                                    },
+                                )
+                            }
                         }
                         navigation(
                             startDestination = Routes.ORDERS,

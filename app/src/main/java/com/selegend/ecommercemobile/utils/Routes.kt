@@ -20,4 +20,5 @@ object Routes {
     const val PAYMENT = "payment"
     const val AUTH = "auth"
     const val USER = "user"
+    const val MANAGE_USER = "manage_user"
 }
