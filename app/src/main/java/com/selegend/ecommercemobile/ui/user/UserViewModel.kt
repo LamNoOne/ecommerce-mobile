@@ -90,7 +90,7 @@ class UserViewModel @Inject constructor(
                     viewModelScope.launch {
                         auth?.let { authRepository.deleteAuth(it) }
                         EventBus.sendEvent(Event.Toast("Logged out successfully"))
-                        sendUIEvent(UIEvent.Navigate(Routes.LOGIN))
+                        sendUIEvent(UIEvent.NavigateLogin)
                     }
                 }
             }

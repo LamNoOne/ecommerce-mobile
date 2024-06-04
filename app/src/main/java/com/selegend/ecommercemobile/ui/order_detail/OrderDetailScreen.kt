@@ -1,14 +1,15 @@
 package com.selegend.ecommercemobile.ui.order_detail
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,23 @@ fun OrderDetailScreen(
     onNavigate: (UIEvent.Navigate) -> Unit,
     viewModel: OrderDetailViewModel = hiltViewModel()
 ) {
+
+    val scaffoldState = rememberScaffoldState()
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.PopBackStack -> onPopBackStack()
+                is UIEvent.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action,
+                    )
+                }
+                is UIEvent.Navigate -> onNavigate(event)
+                else -> Unit
+            }
+        }
+    }
 
     val transactionState by viewModel.state.collectAsStateWithLifecycle()
 
@@ -72,9 +90,9 @@ fun OrderDetailScreen(
                         )
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = { Log.d("Search clicking...", "") }) {
+                            IconButton(onClick = { viewModel.onEvent(OrderDetailEvent.OnBackHome) }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Search,
+                                    imageVector = Icons.Outlined.Home,
                                     contentDescription = "Search Button"
                                 )
                             }

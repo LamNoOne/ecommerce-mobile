@@ -221,6 +221,13 @@ class MainActivity : ComponentActivity() {
                                     onNavigate = {
                                         navController.navigate(it.route)
                                     },
+                                    onBackLogin = {
+                                        navController.navigate(Routes.LOGIN) {
+                                            popUpTo(Routes.MANAGE_USER) {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
                                 )
                             }
                             composable(Routes.PROFILE) {entry ->

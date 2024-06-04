@@ -1,4 +1,5 @@
 package com.selegend.ecommercemobile.ui.order_detail
 
-class OrderDetailEvent {
+sealed class OrderDetailEvent {
+    object OnBackHome: OrderDetailEvent()
 }

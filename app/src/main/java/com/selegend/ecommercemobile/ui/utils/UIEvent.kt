@@ -19,6 +19,8 @@ sealed class UIEvent {
      */
     data class Navigate(val route: String): UIEvent()
 
+    object NavigateLogin : UIEvent()
+
     /**
      * Data class representing a show snackbar event.
      * This event is used when a snackbar needs to be shown.

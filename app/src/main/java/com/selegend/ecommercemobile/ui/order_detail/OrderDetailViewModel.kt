@@ -10,6 +10,7 @@ import com.selegend.ecommercemobile.store.domain.model.core.auth.Auth
 import com.selegend.ecommercemobile.store.domain.repository.AuthRepository
 import com.selegend.ecommercemobile.store.domain.repository.TransactionRepository
 import com.selegend.ecommercemobile.ui.utils.UIEvent
+import com.selegend.ecommercemobile.utils.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -75,6 +76,14 @@ class OrderDetailViewModel @Inject constructor(
         headerMap["Authorization"] = "Bearer ${auth?.accessToken}"
         headerMap["x-user-id"] = auth?.userId.toString()
         return headerMap
+    }
+
+    fun onEvent(event: OrderDetailEvent) {
+        when (event) {
+            is OrderDetailEvent.OnBackHome -> {
+                sendUIEvent(UIEvent.Navigate(Routes.HOME))
+            }
+        }
     }
 
     private fun sendUIEvent(event: UIEvent) {

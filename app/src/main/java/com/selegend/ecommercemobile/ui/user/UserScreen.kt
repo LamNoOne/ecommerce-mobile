@@ -8,7 +8,10 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -42,6 +45,7 @@ fun UserScreen(
     sharedState: UserViewState,
     onPopBackStack: () -> Unit,
     onNavigate: (UIEvent.Navigate) -> Unit,
+    onBackLogin: () -> Unit,
     viewModel: UserViewModel = hiltViewModel(),
     coreViewModel: CoreViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
@@ -58,6 +62,7 @@ fun UserScreen(
                     )
                 }
                 is UIEvent.Navigate -> onNavigate(event)
+                is UIEvent.NavigateLogin -> onBackLogin()
                 else -> Unit
             }
         }
@@ -229,16 +234,16 @@ fun UserScreen(
                             imageVector = Icons.Default.Payments,
                             imageResource = R.drawable.arrow_right,
                         )
-                        HorizontalDivider(
-                            thickness = 2.dp,
-                            color = MaterialTheme.colorScheme.surfaceContainer
-                        )
-                        SettingNavigation(
-                            onClick = { /*TODO*/ },
-                            text = "Settings",
-                            imageVector = Icons.Default.Settings,
-                            imageResource = R.drawable.arrow_right,
-                        )
+//                        HorizontalDivider(
+//                            thickness = 2.dp,
+//                            color = MaterialTheme.colorScheme.surfaceContainer
+//                        )
+//                        SettingNavigation(
+//                            onClick = { /*TODO*/ },
+//                            text = "Settings",
+//                            imageVector = Icons.Default.Settings,
+//                            imageResource = R.drawable.arrow_right,
+//                        )
                         Button(
                             onClick = {
                                 viewModel.onEvent(UserEvent.OnLogoutClick)

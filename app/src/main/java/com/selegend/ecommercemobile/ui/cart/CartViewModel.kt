@@ -39,6 +39,7 @@ class CartViewModel @Inject constructor(
     private var _state = MutableStateFlow(CartViewState())
 
     private var auth by mutableStateOf<Auth?>(null)
+    val authState get() = auth
     private var _uiEvent = Channel<UIEvent>()
 
     val uiEvent = _uiEvent.receiveAsFlow()

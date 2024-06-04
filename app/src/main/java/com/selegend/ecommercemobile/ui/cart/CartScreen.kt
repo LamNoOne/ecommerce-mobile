@@ -244,7 +244,8 @@ fun CartScreen(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .width(120.dp)
-                                    .padding(top = 4.dp, end = 4.dp)
+                                    .padding(top = 4.dp, end = 4.dp),
+                                enabled = selectedItem.size > 0 && viewModel.authState != null
                             ) {
                                 Row(
                                     modifier = Modifier.fillMaxSize(),
@@ -314,7 +315,7 @@ fun CartScreen(
                 }
             }
             item {
-                if (state.cart?.products?.size == 0) {
+                if (state.cart?.products?.size == 0 || viewModel.authState == null) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,

@@ -110,11 +110,16 @@ class ProductDetailViewModel @Inject constructor(
         when (event) {
             is ProductDetailEvent.OnAddToCartClick -> {
                 viewModelScope.launch {
+                    if (auth == null) {
+                        EventBus.sendEvent(Event.Toast("Please login to add product to cart!"))
+                        sendUIEvent(UIEvent.Navigate(Routes.LOGIN))
+                        return@launch
+                    }
                     cartRepository.addToCart(
                         getHeaderMap(),
                         AddCart(event.productId, event.quantity)
                     )
-                        .onRight {cartResponse ->
+                        .onRight { cartResponse ->
                             _cartState.update { it.copy(isLoading = true) }
                             _cartState.update { it.copy(cart = cartResponse.metadata.cart) }
                             _cartState.update { it.copy(isLoading = false) }
