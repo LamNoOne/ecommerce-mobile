@@ -175,6 +175,10 @@ fun OrderDetailScreen(
                                 key = "Shipping Address:  ",
                                 value = "${transactionState.transaction?.shipping?.streetAddress}, ${transactionState.transaction?.shipping?.region}, ${transactionState.transaction?.shipping?.postalCode}, ${transactionState.transaction?.shipping?.postalCode}"
                             )
+                            TextKeyValue(
+                                key = "Total Amount:  ",
+                                value = "$${transactionState.orders?.totalAmount}"
+                            )
                         }
                     }
                 }

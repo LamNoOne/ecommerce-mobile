@@ -9,7 +9,7 @@ import retrofit2.Invocation
  * Interceptor class for handling annotations.
  * This class intercepts the HTTP requests and modifies them based on the annotations present.
  */
-class AnnotationInterceptor: Interceptor {
+class AnnotationInterceptor : Interceptor {
 
     /**
      * Intercepts the HTTP request and modifies it based on the annotations present.
@@ -21,10 +21,12 @@ class AnnotationInterceptor: Interceptor {
         val invocation =
             chain.request().tag(Invocation::class.java) ?: return chain.proceed(chain.request())
         containedOnInvocation(invocation).forEach { annotation ->
-            request = request.newBuilder().addHeader(
-                Constants.X_API_VERSION,
-                Constants.API_VERSION.toString()
-            ).build()
+            if (request.header(Constants.X_API_VERSION) == null) {
+                request = request.newBuilder().addHeader(
+                    Constants.X_API_VERSION,
+                    Constants.API_VERSION.toString()
+                ).build()
+            }
         }
         return chain.proceed(request)
     }

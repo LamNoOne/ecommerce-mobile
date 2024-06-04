@@ -174,8 +174,8 @@ fun CheckoutScreen(
                                             paymentFormId = 1,
                                             orderProducts = state.cart?.products?.map { it.product.id }
                                                 ?: emptyList()
-                                            )
                                         )
+                                    )
                                     )
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -572,5 +572,4 @@ fun ConfirmDialog(
         )
     }
 }
-
 

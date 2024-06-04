@@ -210,7 +210,8 @@ fun PaymentScreen(
                                     )
                                 }
                                 Text(
-                                    text = "1234 Main St, New York, NY 10001",
+                                    text = "${state.order?.lastName} ${state.order?.firstName} | ${state.order?.phoneNumber}" +
+                                            "\n${state.order?.shipAddress}",
                                     fontSize = 12.sp,
                                     color = Color.DarkGray,
                                     fontWeight = FontWeight.Normal,

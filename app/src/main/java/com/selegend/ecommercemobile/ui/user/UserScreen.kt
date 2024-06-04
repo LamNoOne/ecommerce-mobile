@@ -13,7 +13,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,7 +27,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.selegend.ecommercemobile.R
 import com.selegend.ecommercemobile.ui.auth.AuthViewModel
@@ -41,13 +39,13 @@ import kotlinx.coroutines.flow.merge
 
 @Composable
 fun UserScreen(
+    sharedState: UserViewState,
     onPopBackStack: () -> Unit,
     onNavigate: (UIEvent.Navigate) -> Unit,
     viewModel: UserViewModel = hiltViewModel(),
     coreViewModel: CoreViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
         merge(viewModel.uiEvent, coreViewModel.uiEvent).collect { event ->
@@ -65,7 +63,7 @@ fun UserScreen(
         }
     }
 
-    if (state.isLoading) {
+    if (sharedState.isLoading) {
         LoadingItem()
     } else {
         Scaffold(
@@ -146,7 +144,7 @@ fun UserScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         AsyncImage(
-                            model = "${state.user?.image}",
+                            model = "${sharedState.user?.image}",
                             contentDescription = null,
                             modifier = Modifier
                                 .height(80.dp)
@@ -168,7 +166,7 @@ fun UserScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "${state.user?.firstName} ${state.user?.lastName}",
+                                text = "${sharedState.user?.firstName} ${sharedState.user?.lastName}",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -180,7 +178,7 @@ fun UserScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "${state.user?.email}",
+                                    text = "${sharedState.user?.email}",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Gray,
@@ -196,7 +194,7 @@ fun UserScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         SettingNavigation(
-                            onClick = { /*TODO*/ },
+                            onClick = { viewModel.onEvent(UserEvent.OnEditProfileClick) },
                             text = "Edit Profile",
                             imageVector = Icons.Default.Person,
                             imageResource = R.drawable.arrow_right,

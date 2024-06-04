@@ -31,6 +31,15 @@ class UserViewModel @Inject constructor(
     private var _state = MutableStateFlow(UserViewState())
     val state = _state.asStateFlow()
 
+    fun updateState() {
+        _state.update { it.copy() }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        println("UserViewModel cleared")
+    }
+
     /**
      * Channel for UI events.
      */
@@ -63,7 +72,7 @@ class UserViewModel @Inject constructor(
         fun onEvent(event: UserEvent) {
             when (event) {
                 is UserEvent.OnEditProfileClick -> {
-
+                    sendUIEvent(UIEvent.Navigate(Routes.PROFILE))
                 }
                 is UserEvent.OnCartClick -> {
                     sendUIEvent(UIEvent.Navigate(Routes.CART))

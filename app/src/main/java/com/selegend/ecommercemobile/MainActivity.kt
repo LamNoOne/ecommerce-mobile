@@ -45,8 +45,10 @@ import com.selegend.ecommercemobile.ui.payment.PaymentViewModel
 import com.selegend.ecommercemobile.ui.payment.TransactionViewState
 import com.selegend.ecommercemobile.ui.product_detail.ProductDetailScreen
 import com.selegend.ecommercemobile.ui.products.ProductsScreen
+import com.selegend.ecommercemobile.ui.profile.ProfileScreen
 import com.selegend.ecommercemobile.ui.theme.EcommerceMobileTheme
 import com.selegend.ecommercemobile.ui.user.UserScreen
+import com.selegend.ecommercemobile.ui.user.UserViewModel
 import com.selegend.ecommercemobile.utils.Event
 import com.selegend.ecommercemobile.utils.EventBus
 import com.selegend.ecommercemobile.utils.Routes
@@ -56,6 +58,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     var orderId: Int = 0
+    val applicationContext = this
 
     @JvmName("setOrderId1")
     fun setOrderId(orderId: Int) {
@@ -209,12 +212,27 @@ class MainActivity : ComponentActivity() {
                             startDestination = Routes.MANAGE_USER,
                             route = Routes.USER
                         ) {
-                            composable(Routes.MANAGE_USER) {
+                            composable(Routes.MANAGE_USER) {entry ->
+                                val viewModel = entry.sharedViewModel<UserViewModel>(navController)
+                                val state by viewModel.state.collectAsStateWithLifecycle()
                                 UserScreen(
+                                    sharedState = state,
                                     onPopBackStack = { navController.popBackStack() },
                                     onNavigate = {
                                         navController.navigate(it.route)
                                     },
+                                )
+                            }
+                            composable(Routes.PROFILE) {entry ->
+                                val viewModel = entry.sharedViewModel<UserViewModel>(navController)
+                                val state by viewModel.state.collectAsStateWithLifecycle()
+                                ProfileScreen(
+                                    sharedState = state,
+                                    onPopBackStack = { navController.popBackStack() },
+                                    onNavigate = {
+                                        navController.navigate(it.route)
+                                    },
+                                    context = applicationContext
                                 )
                             }
                         }
