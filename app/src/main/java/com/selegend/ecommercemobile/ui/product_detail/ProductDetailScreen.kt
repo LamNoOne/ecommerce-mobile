@@ -15,7 +15,6 @@ import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.material3.Button
@@ -153,21 +152,27 @@ fun ProductDetailScreen(
                 ) {
                     BottomNavigationItem(
                         icon = {
-                            Icon(
-                                Icons.Default.AddShoppingCart,
-                                contentDescription = "Add to cart"
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Default.AddShoppingCart,
+                                    contentDescription = null,
+                                )
+                                Text(text = "Add to cart", fontSize = 14.sp, fontWeight = FontWeight.Normal)
+                            }
                         },
-                        label = { androidx.compose.material.Text("Add to cart") },
                         selected = true,
                         onClick = { isSheetOpen = true }
                     )
-                    BottomNavigationItem(
-                        icon = { Icon(Icons.Default.Payment, contentDescription = "Payment") },
-                        label = { androidx.compose.material.Text("Payment") },
-                        selected = true,
-                        onClick = { }
-                    )
+//                    BottomNavigationItem(
+//                        icon = { Icon(Icons.Default.Payment, contentDescription = "Payment") },
+//                        label = { androidx.compose.material.Text("Payment") },
+//                        selected = true,
+//                        onClick = { }
+//                    )
                 }
             }
         ) {

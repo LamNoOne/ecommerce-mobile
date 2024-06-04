@@ -97,6 +97,9 @@ class OrderViewModel @Inject constructor(
             is OrdersEvent.OnPaymentClick -> {
                 sendUIEvent(UIEvent.Navigate("${Routes.PAYMENT}?orderId=${event.orderId}"))
             }
+            is OrdersEvent.OnBackHome -> {
+                sendUIEvent(UIEvent.Navigate(Routes.HOME))
+            }
         }
     }
 

@@ -35,7 +35,6 @@ import com.google.android.gms.wallet.contract.TaskResultContracts
 import com.selegend.ecommercemobile.ui.auth.AuthScreen
 import com.selegend.ecommercemobile.ui.cart.CartScreen
 import com.selegend.ecommercemobile.ui.checkout.CheckoutScreen
-import com.selegend.ecommercemobile.ui.favorite.FavoriteScreen
 import com.selegend.ecommercemobile.ui.home.screens.HomeScreen
 import com.selegend.ecommercemobile.ui.order_detail.OrderDetailScreen
 import com.selegend.ecommercemobile.ui.orders.OrdersScreen
@@ -204,9 +203,6 @@ class MainActivity : ComponentActivity() {
                                 onGooglePayButtonClick = { requestPayment() },
                                 setOrderId = { setOrderId(it) }
                             )
-                        }
-                        composable(Routes.FAVORITE) {
-                            FavoriteScreen()
                         }
                         navigation(
                             startDestination = Routes.MANAGE_USER,

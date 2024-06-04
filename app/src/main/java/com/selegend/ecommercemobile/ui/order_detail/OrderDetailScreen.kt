@@ -93,7 +93,7 @@ fun OrderDetailScreen(
                             IconButton(onClick = { viewModel.onEvent(OrderDetailEvent.OnBackHome) }) {
                                 Icon(
                                     imageVector = Icons.Outlined.Home,
-                                    contentDescription = "Search Button"
+                                    contentDescription = "Home Button"
                                 )
                             }
                         }

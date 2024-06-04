@@ -3,7 +3,6 @@
 package com.selegend.ecommercemobile.ui.orders
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -14,7 +13,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -151,9 +150,9 @@ fun OrdersScreen(
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { Log.d("Search clicking...", "") }) {
+                        IconButton(onClick = { viewModel.onEvent(OrdersEvent.OnBackHome) }) {
                             Icon(
-                                imageVector = Icons.Outlined.Search,
+                                imageVector = Icons.Outlined.Home,
                                 contentDescription = "Search Button"
                             )
                         }
